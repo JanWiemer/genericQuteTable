@@ -1,0 +1,72 @@
+<style>
+  :root {
+    --primary: #6366f1; --primary-hover: #818cf8;
+    --bg-sidebar: #0f172a; --bg-sub: #1e293b; --bg-deep: #334155;
+    --bg-body: #f1f5f9; --bg-card: #ffffff;
+    --text-main: #334155; --text-muted: #64748b;
+    --border-color: #e2e8f0;
+    --sidebar-width: 260px; --sidebar-collapsed: 68px;
+  }
+
+  /* --- BASIS & LAYOUT --- */
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', sans-serif; background: var(--bg-body); display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+  .app-container { display: flex; flex-grow: 1; overflow: hidden; }
+
+  /* --- SIDEBAR (3-LEVEL & COLLAPSIBLE) --- */
+  aside {
+    width: var(--sidebar-width); background: var(--bg-sidebar); color: white;
+    transition: width 0.3s ease; flex-shrink: 0; overflow-y: auto; overflow-x: hidden;
+  }
+  aside.collapsed { width: var(--sidebar-collapsed); }
+
+  .sidebar-header { padding: 1.25rem; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.1); }
+  .logo { font-weight: 800; color: var(--primary-hover); white-space: nowrap; }
+  aside.collapsed .logo, aside.collapsed .nav-text, aside.collapsed .arrow { display: none; }
+
+  .toggle-btn { background: rgba(255,255,255,0.1); border: none; color: white; cursor: pointer; padding: 5px 10px; border-radius: 4px; }
+
+  nav ul { list-style: none; padding: 0.5rem; }
+  .nav-item { position: relative; }
+  .nav-link {
+    color: #94a3b8; text-decoration: none; padding: 0.6rem 0.75rem;
+    display: flex; align-items: center; gap: 1rem; border-radius: 0.375rem; cursor: pointer;
+  }
+  .nav-link:hover { background: var(--bg-sub); color: white; }
+
+  /* Multi-Level CSS */
+  .sub-menu { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; background: rgba(0,0,0,0.2); border-radius: 0.375rem; margin-left: 0.5rem; }
+  .nav-item:hover > .sub-menu { max-height: 500px; padding: 0.2rem 0; }
+  .arrow { font-size: 0.6rem; margin-left: auto; transition: 0.3s; opacity: 0.5; }
+  .nav-item:hover > .nav-link > .arrow { transform: rotate(90deg); }
+
+  .sub-menu .nav-link { padding-left: 1.2rem; font-size: 0.85rem; }
+  .sub-menu .sub-menu .nav-link { padding-left: 2.2rem; font-size: 0.8rem; background: rgba(0,0,0,0.1); }
+
+  /* --- MAIN CONTENT --- */
+  main { flex-grow: 1; display: flex; flex-direction: column; padding: 1.5rem; overflow: hidden; }
+
+  .toolbar { margin-bottom: 1rem; display: flex; gap: 0.5rem; flex-shrink: 0; }
+  .search-group { display: flex; flex-grow: 1; max-width: 600px; border-radius: 0.5rem; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+  .search-input { flex-grow: 1; padding: 0.7rem 1rem; border: 1px solid var(--border-color); outline: none; }
+  .server-btn { background: var(--primary); color: white; border: none; padding: 0 1.25rem; cursor: pointer; font-weight: 600; }
+
+  /* --- TABLE --- */
+  .table-wrapper { background: var(--bg-card); border-radius: 0.5rem; border: 1px solid var(--border-color); overflow: auto; flex-grow: 1; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.825rem; min-width: 700px; }
+  thead th { position: sticky; top: 0; z-index: 10; background: #f8fafc; padding: 0.75rem 1rem; text-align: left; border-bottom: 2px solid var(--border-color); cursor: pointer; user-select: none; }
+  td { padding: 0.5rem 1rem; border-bottom: 1px dotted var(--border-color); }
+  .asc::after { content: ' ↑'; color: var(--primary); }
+  .desc::after { content: ' ↓'; color: var(--primary); }
+  .badge { padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; background: #dcfce7; color: #166534; }
+  .pending { background: #fef3c7; color: #92400e; }
+
+  /* --- STATUSBAR --- */
+  #statusbar {
+    background: #0f172a; color: #38bdf8; padding: 0.6rem 1.2rem;
+    font-family: 'Fira Code', monospace; font-size: 0.75rem;
+    border-top: 2px solid var(--primary); flex-shrink: 0;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .status-val { color: #facc15; font-weight: bold; }
+</style>

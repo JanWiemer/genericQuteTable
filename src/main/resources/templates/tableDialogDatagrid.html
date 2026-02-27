@@ -1,0 +1,20 @@
+<table id="userTable">
+  <thead>
+  <tr>
+    <th onclick="localSort(0)">Name</th>
+    <th onclick="localSort(1)">Position</th>
+    <th onclick="localSort(2)">E-Mail</th>
+    <th onclick="localSort(3)">Status</th>
+  </tr>
+  </thead>
+  <tbody id="userTableBody">
+  q{#each entries}
+    <tr>
+      <td><strong>{it.name}</strong></td>
+      <td>{it.postion}</td>
+      <td>{it.eMail}</td>
+      <td><span class="badge">{it.status}</span></td>
+    </tr>
+  {/each}
+  </tbody>
+</table>

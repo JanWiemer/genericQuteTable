@@ -1,0 +1,74 @@
+<script>
+    const colMap = { "name": 0, "pos": 1, "mail": 2, "status": 3 };
+
+    //==================================
+    // HTMX INTERCEPT
+    function interceptHTMX(event) {
+        event.preventDefault();
+        const p = event.detail.parameters;
+        document.getElementById('stEvent').textContent = "Intercepted";
+        document.getElementById('stQuery').textContent = p.filter || "none";
+        document.getElementById('stSort').textContent = `Col $\{p.sortCol} ($\{p.sortDir})`;
+    }
+
+    //==================================
+    // Autocompletion column filter names
+    document.getElementById("userInput").addEventListener("keydown", function(e) {
+        if (e.ctrlKey && e.code === "Space") {
+            e.preventDefault();
+            const val = e.target.value;
+            const lastWordMatch = val.match(/(\w+)$/);
+            const lastWord = lastWordMatch ? lastWordMatch[0].toLowerCase() : "";
+            const match = Object.keys(colMap).find(s => s.startsWith(lastWord));
+            if (match) {
+                e.target.value = val.substring(0, val.length - lastWord.length) + match + ":";
+                localFilter();
+            }
+        }
+    });
+
+    //==================================
+    // Filtering locally on client
+    function localFilter() {
+        const query = document.getElementById("userInput").value.toLowerCase();
+        const rows = document.querySelectorAll("#userTableBody tr");
+        const conditions = query.split(/&|and/i).map(c => c.trim()).filter(c => c !== "");
+
+        rows.forEach(row => {
+            let allMatch = true;
+            conditions.forEach(cond => {
+                let condMatch = false;
+                if (cond.includes(":")) {
+                    const [key, pat] = cond.split(":").map(s => s.trim());
+                    const idx = colMap[key];
+                    if (idx !== undefined && pat !== "") {
+                        const txt = row.cells[idx].innerText.toLowerCase();
+                        try { condMatch = new RegExp(pat).test(txt); } catch(e) { condMatch = txt.includes(pat); }
+                    } else { condMatch = true; }
+                } else {
+                    condMatch = row.innerText.toLowerCase().includes(cond);
+                }
+                if (!condMatch) allMatch = false;
+            });
+            row.style.display = allMatch ? "" : "none";
+        });
+    }
+    //==================================
+    // Sorting locally on client
+    let sortOrder = 1; let lastIdx = -1;
+    function localSort(idx) {
+        const tbody = document.getElementById("userTableBody");
+        const rows = Array.from(tbody.rows);
+        sortOrder = (lastIdx === idx) ? sortOrder * -1 : 1;
+        lastIdx = idx;
+
+        document.querySelectorAll("th").forEach(th => th.classList.remove("asc", "desc"));
+        document.querySelectorAll("th")[idx].classList.add(sortOrder === 1 ? "asc" : "desc");
+
+        document.querySelector("input[name='sortCol']").value = idx;
+        document.querySelector("input[name='sortDir']").value = (sortOrder === 1 ? "asc" : "desc");
+
+        rows.sort((a, b) => a.cells[idx].innerText.localeCompare(b.cells[idx].innerText, 'de', \{numeric:true}) * sortOrder);
+        rows.forEach(r => tbody.appendChild(r));
+    }
+</script>
