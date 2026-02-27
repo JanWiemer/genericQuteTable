@@ -15,14 +15,25 @@ public class ApplicationResource {
   @Inject
   Template application;
   @Inject
-  Template tableDialogDataGrid;
+  Template dialogUserTable;
+  @Inject
+  Template dialogUserTableGrid;
 
   @GET
   @Produces(MediaType.TEXT_HTML)
   public TemplateInstance getApplication() {
     Log.info("Load Application");
-    return application.data("entries", getUserData());
+    List<DialogDefinition> dialogs = List.of(new DialogDefinition("User Dialog"));
+    return application.data("dialogs", dialogs);
   }
+
+  @GET
+  @Path("api/dialog")
+  @Produces(MediaType.TEXT_HTML)
+  public TemplateInstance getDialog() {
+    return dialogUserTable.data("entries", getUserData());
+  }
+
 
   @GET
   @Path("api/data")
@@ -33,7 +44,7 @@ public class ApplicationResource {
                                         @QueryParam("sortCDir") String sortCDir //
   ) {
     Log.info("get table data with filter: " + filter + ", sortCol: " + sortCol + ", sortCDir: " + sortCDir);
-    return tableDialogDataGrid.data("entries", applyFilter(filter, getUserData()));
+    return dialogUserTableGrid.data("entries", applyFilter(filter, getUserData()));
   }
 
   private List<ExampleDataSource.User> applyFilter(String filter, List<ExampleDataSource.User> data) {

@@ -1,0 +1,29 @@
+{@java.util.List<org.jaw.qutetable.gentable.TableColumnDefinition> columns}
+{@java.util.List<org.jaw.qutetable.gentable.TableRowData> rows}
+<table id="userTable">
+  <!------------------------------------------------------------------------------------>
+  <thead id="genericTableHeader">
+  <tr>
+    {#for col in columns}
+      <th title="{col.description}" , onclick="localSortTable({col_index})">{col.name}</th>
+    {/for}
+  </tr>
+  </thead>
+  <!------------------------------------------------------------------------------------>
+  <tbody id="genericTableBody">
+  {#for row in rows}
+    <tr>
+      {#for cell in row.cells}
+        <td title="{cell.description}">{cell.content}</td>
+      {/for}
+    </tr>
+  {/for}
+  </tbody>
+  <!------------------------------------------------------------------------------------>
+  <script>
+      function localSortTable(index) {
+          localSort(index);
+      }
+  </script>
+  <!------------------------------------------------------------------------------------>
+</table>

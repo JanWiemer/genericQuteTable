@@ -1,0 +1,21 @@
+<header style="margin-bottom:1rem;"><h1>Table Dialog</h1></header>
+
+<div class="toolbar">,
+  <div class="search-group">
+    <label for="userInput">Search</label>
+    <input type="text" id="userInput" name="filter" class="search-input"
+           placeholder="Suche (z.B. name:max & pos:dev) - STRG+SPACE" onkeyup="localFilter()">
+    <button class="server-btn"
+            hx-get="/api/data"
+            hx-include="#userInput, [name='sortCol'], [name='sortDir']"
+            hx-target="#tableArea" , hx-swap="innerHTML"
+    >
+      🔍 Server
+    </button>
+  </div>
+  <input type="hidden" name="sortCol" value="none">
+  <input type="hidden" name="sortDir" value="none">
+</div>
+<div id="tableArea" class="table-wrapper">
+    {#include dialogGenericTableGrid.html/}
+</div>

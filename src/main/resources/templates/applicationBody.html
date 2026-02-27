@@ -1,0 +1,18 @@
+<div class="app-container" hx-on::beforeSend="interceptHTMX(event)">
+  <aside id="sidebar">
+      {#include applicationNav.html /}
+  </aside>
+  <main>
+    <div id="dialogArea">
+        {#include applicationDialog.html/}
+    </div>
+  </main>
+</div>
+<footer id="statusbar">
+  <div>
+    Status: <span id="stEvent" class="status-val">Ready</span> |
+    Query: <span id="stQuery" class="status-val">-</span> |
+    Sort: <span id="stSort" class="status-val">-</span>
+  </div>
+  <div style="opacity:0.5">HTMX Intercept Active</div>
+</footer>

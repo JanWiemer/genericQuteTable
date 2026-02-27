@@ -1,5 +1,25 @@
+<header style="margin-bottom:1rem;"><h1>Table Dialog</h1></header>
+<div class="toolbar">,
+  <div class="search-group">
+    <label for="userInput"></label>
+    <input type="text" id="userInput" name="filter" class="search-input"
+           placeholder="Suche (z.B. name:max & pos:dev) - STRG+SPACE" onkeyup="localFilter()">
+    <button class="server-btn"
+            hx-get="/api/data"
+            hx-include="#userInput, [name='sortCol'], [name='sortDir']"
+            hx-target="#tableArea" , hx-swap="innerHTML"
+    >
+      🔍 Server
+    </button>
+  </div>
+  <input type="hidden" name="sortCol" value="none">
+  <input type="hidden" name="sortDir" value="none">
+</div>
+<div id="tableArea" class="table-wrapper">
+    {#include dialogUserTableGrid.html /}
+</div>
 <script>
-    const colMap = { "name": 0, "pos": 1, "mail": 2, "status": 3 };
+    const colMap = {"name": 0, "pos": 1, "mail": 2, "status": 3};
 
     //==================================
     // HTMX INTERCEPT
@@ -13,7 +33,7 @@
 
     //==================================
     // Autocompletion column filter names
-    document.getElementById("userInput").addEventListener("keydown", function(e) {
+    document.getElementById("userInput").addEventListener("keydown", function (e) {
         if (e.ctrlKey && e.code === "Space") {
             e.preventDefault();
             const val = e.target.value;
@@ -43,8 +63,14 @@
                     const idx = colMap[key];
                     if (idx !== undefined && pat !== "") {
                         const txt = row.cells[idx].innerText.toLowerCase();
-                        try { condMatch = new RegExp(pat).test(txt); } catch(e) { condMatch = txt.includes(pat); }
-                    } else { condMatch = true; }
+                        try {
+                            condMatch = new RegExp(pat).test(txt);
+                        } catch (e) {
+                            condMatch = txt.includes(pat);
+                        }
+                    } else {
+                        condMatch = true;
+                    }
                 } else {
                     condMatch = row.innerText.toLowerCase().includes(cond);
                 }
@@ -53,9 +79,12 @@
             row.style.display = allMatch ? "" : "none";
         });
     }
+
     //==================================
     // Sorting locally on client
-    let sortOrder = 1; let lastIdx = -1;
+    let sortOrder = 1;
+    let lastIdx = -1;
+
     function localSort(idx) {
         const tbody = document.getElementById("userTableBody");
         const rows = Array.from(tbody.rows);
@@ -68,7 +97,10 @@
         document.querySelector("input[name='sortCol']").value = idx;
         document.querySelector("input[name='sortDir']").value = (sortOrder === 1 ? "asc" : "desc");
 
-        rows.sort((a, b) => a.cells[idx].innerText.localeCompare(b.cells[idx].innerText, 'de', \{numeric:true}) * sortOrder);
+        rows.sort((a, b) => a.cells[idx].innerText.localeCompare(b.cells[idx].innerText, 'de', \{numeric:true}) *
+        sortOrder
+    )
+        ;
         rows.forEach(r => tbody.appendChild(r));
     }
 </script>
