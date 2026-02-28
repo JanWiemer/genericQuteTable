@@ -16,3 +16,17 @@
   </div>
   <div style="opacity:0.5">HTMX Intercept Active</div>
 </footer>
+<script>
+  //==================================
+  // HTMX INTERCEPT
+  function interceptHTMX(event) {
+    console.log("interceptHTMX", event);
+    event.preventDefault();
+    const p = event.detail.parameters;
+    document.getElementById('stEvent').textContent = "Intercepted";
+    document.getElementById('stQuery').textContent = p.filter || "none";
+    document.getElementById('stSort').textContent = `Col $\{p.sortCol} ($\{p.sortDir})`;
+  }
+  //==================================
+</script>
+

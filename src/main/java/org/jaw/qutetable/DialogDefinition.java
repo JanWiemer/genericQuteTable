@@ -1,4 +1,4 @@
 package org.jaw.qutetable;
 
-public record DialogDefinition(String dialogName) {
+public record DialogDefinition(String dialogName, String dialogPath) {
 }

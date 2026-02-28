@@ -7,7 +7,7 @@
     {#each dialogs}
       <li class="nav-item">
         <a
-                hx-get="/api/dialog" hx-target="#dialogArea"  hx-swap="innerHTML"
+                hx-get="{it.dialogPath}" hx-target="#dialogArea"  hx-swap="innerHTML"
                 class="nav-link"><span class="nav-text">{it.dialogName}</span>
         </a></li>
     {/each}

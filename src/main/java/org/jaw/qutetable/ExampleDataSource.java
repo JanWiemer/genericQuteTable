@@ -4,7 +4,7 @@ import java.util.List;
 
 public class ExampleDataSource {
 
-  static List<User> getUserData() {
+  public static List<User> getUserData() {
     return List.of(
         new User("Max Mustermann", 30, "Lead Developer", "max@example.com", "Aktiv"),
         new User("Otto Mumm", 19, "Secretary", "mumm@example.com", "Inaktiv"),
@@ -15,7 +15,7 @@ public class ExampleDataSource {
     );
   }
 
-  record User(String name, int age, String postion, String eMail, String status) {
+  public record User(String name, int age, String postion, String eMail, String status) {
   }
 
 }

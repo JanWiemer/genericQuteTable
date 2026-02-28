@@ -5,7 +5,7 @@
     <input type="text" id="userInput" name="filter" class="search-input"
            placeholder="Suche (z.B. name:max & pos:dev) - STRG+SPACE" onkeyup="localFilter()">
     <button class="server-btn"
-            hx-get="/api/data"
+            hx-get="/api/dialog/user/data"
             hx-include="#userInput, [name='sortCol'], [name='sortDir']"
             hx-target="#tableArea" , hx-swap="innerHTML"
     >
@@ -20,16 +20,6 @@
 </div>
 <script>
     const colMap = {"name": 0, "pos": 1, "mail": 2, "status": 3};
-
-    //==================================
-    // HTMX INTERCEPT
-    function interceptHTMX(event) {
-        event.preventDefault();
-        const p = event.detail.parameters;
-        document.getElementById('stEvent').textContent = "Intercepted";
-        document.getElementById('stQuery').textContent = p.filter || "none";
-        document.getElementById('stSort').textContent = `Col $\{p.sortCol} ($\{p.sortDir})`;
-    }
 
     //==================================
     // Autocompletion column filter names
@@ -90,17 +80,11 @@
         const rows = Array.from(tbody.rows);
         sortOrder = (lastIdx === idx) ? sortOrder * -1 : 1;
         lastIdx = idx;
-
         document.querySelectorAll("th").forEach(th => th.classList.remove("asc", "desc"));
         document.querySelectorAll("th")[idx].classList.add(sortOrder === 1 ? "asc" : "desc");
-
         document.querySelector("input[name='sortCol']").value = idx;
         document.querySelector("input[name='sortDir']").value = (sortOrder === 1 ? "asc" : "desc");
-
-        rows.sort((a, b) => a.cells[idx].innerText.localeCompare(b.cells[idx].innerText, 'de', \{numeric:true}) *
-        sortOrder
-    )
-        ;
+        rows.sort((a, b) => a.cells[idx].innerText.localeCompare(b.cells[idx].innerText) * sortOrder);
         rows.forEach(r => tbody.appendChild(r));
     }
 </script>

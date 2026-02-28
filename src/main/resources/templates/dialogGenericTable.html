@@ -1,21 +1,117 @@
-<header style="margin-bottom:1rem;"><h1>Table Dialog</h1></header>
+{@org.jaw.qutetable.gentable.TableDialogData data}
+<header style="margin-bottom:1rem;"><h1>{data.dialogTitle}</h1></header>
 
 <div class="toolbar">,
   <div class="search-group">
-    <label for="userInput">Search</label>
-    <input type="text" id="userInput" name="filter" class="search-input"
-           placeholder="Suche (z.B. name:max & pos:dev) - STRG+SPACE" onkeyup="localFilter()">
+    <label for="tableFilterInput" , hidden>Search: </label>
+    <input type="text" id="tableFilterInput" name="filter" class="search-input"
+           placeholder="Search Fulltext or for column (e.g. :name=Max & :status~:Ak.*) - STRG+SPACE"
+           value="{data.initialFilter}"
+           onkeyup="localFilterTable()">
     <button class="server-btn"
-            hx-get="/api/data"
-            hx-include="#userInput, [name='sortCol'], [name='sortDir']"
+            hx-get="{data.tableDataPath}"
+            hx-include="#tableFilterInput, #tableSortColumnName, #tableSortDirection"
             hx-target="#tableArea" , hx-swap="innerHTML"
-    >
-      🔍 Server
+    >🔍 Server
     </button>
   </div>
-  <input type="hidden" name="sortCol" value="none">
-  <input type="hidden" name="sortDir" value="none">
+  <input type="hidden" name="tableSortColumnIdx" value="none">
+  <input type="hidden" name="tableSortColumnName" id="tableSortColumnName" value="none">
+  <input type="hidden" name="tableSortDirection" id="tableSortDirection" value="none">
+  <input name="tableSortSpec" value="" style="border:none" disabled>
 </div>
 <div id="tableArea" class="table-wrapper">
     {#include dialogGenericTableGrid.html/}
 </div>
+<script>
+    //==================================
+    // Filtering locally on client
+    //==================================
+    const colMap = new Map();
+    {#for col in data.columns}
+    colMap.set("{col.name}".toLowerCase(), {col_index});
+    {/for}
+    function localFilterTable() {
+        const filterQuery = document.getElementById("tableFilterInput").value;
+        const rows = document.querySelectorAll("#genericTableBody tr");
+        const conditions = filterQuery.split(/&|and/i).map(c => c.trim()).filter(c => c !== "");
+        rows.forEach(row => {
+            let matchesFilter = true;
+            for (const condition of conditions) {
+                if (!condition.startsWith(":")) { // normal full text search in all columns
+                    if (!row.innerHTML.includes(condition)) {
+                        matchesFilter = false;
+                        break;
+                    }
+                } else if (condition.includes("=")) { // column filter with normal includes
+                    const [columnKey, filterPattern] = condition.substring(1).split("=").map(s => s.trim());
+                    const columnIdx = colMap.get(columnKey.toLowerCase());
+                    if (columnIdx !== undefined && filterPattern !== "") {
+                        const columnCellText = row.cells[columnIdx].innerText;
+                        if (!columnCellText.includes(filterPattern)) {
+                            matchesFilter = false;
+                            break;
+                        }
+                    }
+                } else if (condition.includes("~")) { // column filter with regexp search
+                    const [columnKey, filterPattern] = condition.substring(1).split("~").map(s => s.trim());
+                    const columnIdx = colMap.get(columnKey.toLowerCase());
+                    if (columnIdx !== undefined && filterPattern !== "") {
+                        const columnCellText = row.cells[columnIdx].innerText;
+                        let matchesCondition = true;
+                        try {
+                            matchesCondition = new RegExp(filterPattern).test(columnCellText);
+                        } catch (e) {
+                            matchesCondition = columnCellText.includes(filterPattern);
+                        }
+                        if (!matchesCondition) {
+                            matchesFilter = false;
+                            break;
+                        }
+                    }
+                }
+            }
+            row.style.display = matchesFilter ? "" : "none";
+        });
+    }
+
+    //==================================
+    // Autocompletion column filter names
+    document.getElementById("tableFilterInput").addEventListener("keydown", function (e) {
+        if (e.ctrlKey && e.code === "Space") {
+            e.preventDefault();
+            const val = e.target.value;
+            const lastWordMatch = val.match(/([\w:]+)$/);
+            const lastWord = lastWordMatch ? lastWordMatch[0].toLowerCase() : "";
+            if (lastWord.startsWith(":") && !lastWord.includes("=") && !lastWord.includes("~")) {
+                const columnPrefix = lastWord.substring(1).trim();
+                const matchingCols = colMap.keys().filter(s => s.startsWith(columnPrefix)).toArray();
+                if (matchingCols !== undefined && matchingCols.length == 1) {
+                    e.target.value = val.substring(0, val.length - columnPrefix.length) + matchingCols[0];
+                    localFilterTable();
+                }
+            }
+        }
+    });
+    //==================================
+    // Sorting locally on client
+    //==================================
+    let sortOrder = 1;
+    let lastIdx = -1;
+
+    function localSortTable(idx) {
+        const tbody = document.getElementById("genericTableBody");
+        const rows = Array.from(tbody.rows);
+        sortOrder = (lastIdx === idx) ? sortOrder * -1 : 1;
+        lastIdx = idx;
+        let sortColumn = document.querySelectorAll("th")[idx];
+        document.querySelectorAll("th").forEach(th => th.classList.remove("asc", "desc"));
+        sortColumn.classList.add(sortOrder === 1 ? "asc" : "desc");
+        document.querySelector("input[name='tableSortColumnIdx']").value = idx;
+        document.querySelector("input[name='tableSortColumnName']").value = sortColumn.innerHTML;
+        document.querySelector("input[name='tableSortDirection']").value = (sortOrder === 1 ? "asc" : "desc");
+        document.querySelector("input[name='tableSortSpec']").value = (sortOrder === 1 ? "ASC" : "DESC") + " by " + sortColumn.innerHTML;
+        rows.sort((a, b) => sortOrder * a.cells[idx].innerText.localeCompare(b.cells[idx].innerText));
+        rows.forEach(r => tbody.appendChild(r));
+    }
+</script>
