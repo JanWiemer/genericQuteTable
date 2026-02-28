@@ -34,8 +34,8 @@ public class GenericTableResource {
   public TemplateInstance getTableData( //
                                         @QueryParam("object") String object, //
                                         @QueryParam("filter") String filter, //
-                                        @QueryParam("sortCol") String sortCol, //
-                                        @QueryParam("sortCDir") String sortCDir) {
+                                        @QueryParam("tableSortColumnName") String sortCol, //
+                                        @QueryParam("tableSortDir") String sortCDir) {
     Log.info("get table data for " + object + " with filter: " + filter + ", sortCol: " + sortCol + ", sortCDir: " + sortCDir);
     TableDialogData tdd = createTableData(object, filter, sortCol, sortCDir);
     return dialogGenericTableGrid.data("data", tdd);
