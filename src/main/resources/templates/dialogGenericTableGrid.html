@@ -1,22 +1,65 @@
 {@org.jaw.qutetable.gentable.TableDialogData data}
-<table id="genericTable">
-  <!------------------------------------------------------------------------------------>
-  <thead id="genericTableHeader">
-  <tr>
-    {#for col in data.columns}
-      <th title="{col.description}" , onclick="localSortTable({col_index})">{col.name}</th>
-    {/for}
-  </tr>
-  </thead>
-  <!------------------------------------------------------------------------------------>
-  <tbody id="genericTableBody">
-  {#for row in data.rows}
-    <tr>
-      {#for cell in row.cells}
-        <td title="{cell.description}">{cell.content}</td>
+<div id="masterDetailPane">
+  <div id="mainTablePane">
+    <table id="genericTable">
+      <!------------------------------------------------------------------------------------>
+      <thead id="genericTableHeader">
+      <tr>
+        {#for col in data.columns}
+          <th title="{col.description}" , onclick="localSortTable({col_index})">{col.name}</th>
+        {/for}
+      </tr>
+      </thead>
+      <!------------------------------------------------------------------------------------>
+      <tbody id="genericTableBody">
+      {#for row in data.rows}
+        <tr class="row-clickable">
+          {#for cell in row.cells}
+            <td title="{cell.description}">{cell.content}</td>
+          {/for}
+        </tr>
       {/for}
-    </tr>
-  {/for}
-  </tbody>
-  <!------------------------------------------------------------------------------------>
-</table>
+      </tbody>
+      <!------------------------------------------------------------------------------------>
+    </table>
+  </div>
+  <div id="resizer"></div>
+  <div id="detailPane">
+    <div class="detailColumnPane">
+      <h4>Details</h4>
+      <div id="kvContent"><p style="color: #999;">Select a Row...</p></div>
+    </div>
+    <div class="detailJsonPane">
+      <h4>JSON Inspector</h4>
+      <div id="jsonContent" class="json-tree"></div>
+    </div>
+  </div>
+</div>
+<script>
+    const tableBody = document.getElementById('genericTableBody');
+    tableBody.addEventListener('click', e => {
+        const row = e.target.closest('.row-clickable');
+        if (!row) return;
+        document.querySelectorAll('.row-clickable').forEach(r => r.classList.remove('selected'));
+        row.classList.add('selected');
+        //const data = JSON.parse(row.dataset.details);
+        //--- KV-Liste
+        document.getElementById('kvContent').innerHTML = `<div class="kv-grid">SELECTED</div>`;
+        //--- JSON Baum
+        document.getElementById('jsonContent').innerHTML = `SELECTED`;
+    });
+
+    // ----- Resizer Logic ------
+    const resizer = document.getElementById('resizer');
+    const bottomPane = document.getElementById('detailPane');
+    let isResizing = false;
+    resizer.addEventListener('mousedown', () => isResizing = true);
+    document.addEventListener('mousemove', e => {
+        if (!isResizing) return;
+        const newHeight = window.innerHeight - e.clientY;
+        if (newHeight > 100 && newHeight < window.innerHeight * 0.8) {
+            bottomPane.style.height = newHeight + 'px';
+        }
+    });
+    document.addEventListener('mouseup', () => isResizing = false);
+</script>

@@ -1,6 +1,7 @@
 {@org.jaw.qutetable.gentable.TableDialogData data}
+<!---------------------------------------------------------->
 <header style="margin-bottom:1rem;"><h1>{data.dialogTitle}</h1></header>
-
+<!---------------------------------------------------------->
 <div class="toolbar">,
   <div class="search-group">
     <label for="tableFilterInput" , hidden>Search: </label>
@@ -20,9 +21,12 @@
   <input type="hidden" name="tableSortDirection" id="tableSortDirection" value="none">
   <input name="tableSortSpec" value="" style="border:none" disabled>
 </div>
+<!---------------------------------------------------------->
 <div id="tableArea" class="table-wrapper">
     {#include dialogGenericTableGrid.html/}
 </div>
+<!---------------------------------------------------------->
+<!---------------------------------------------------------->
 <script>
     //==================================
     // Filtering locally on client

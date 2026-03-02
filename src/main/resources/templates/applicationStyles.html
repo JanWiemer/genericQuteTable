@@ -7,7 +7,6 @@
     --border-color: #e2e8f0;
     --sidebar-width: 260px; --sidebar-collapsed: 68px;
   }
-
   /* --- BASIS & LAYOUT --- */
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Inter', sans-serif; background: var(--bg-body); display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
@@ -53,13 +52,46 @@
 
   /* --- TABLE --- */
   .table-wrapper { background: var(--bg-card); border-radius: 0.5rem; border: 1px solid var(--border-color); overflow: auto; flex-grow: 1; }
+
   table { width: 100%; border-collapse: collapse; font-size: 0.825rem; min-width: 700px; }
   thead th { position: sticky; top: 0; z-index: 10; background: #f8fafc; padding: 0.75rem 1rem; text-align: left; border-bottom: 2px solid var(--border-color); cursor: pointer; user-select: none; }
   td { padding: 0.5rem 1rem; border-bottom: 1px dotted var(--border-color); }
+  .row-clickable { cursor: pointer; }
+  .row-clickable.selected { background-color: #e3f2fd; font-weight: bold; }
   .asc::after { content: ' ↑'; color: var(--primary); }
   .desc::after { content: ' ↓'; color: var(--primary); }
   .badge { padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; background: #dcfce7; color: #166534; }
   .pending { background: #fef3c7; color: #92400e; }
+
+
+  /* ---------------------------------------- */
+
+  .masterDetailPane { display: flex; flex-direction: column; height: 100vh; }
+  #mainTablePane { flex: 1; overflow-y: auto; padding: 20px; min-height: 100px; }
+  #resizer { height: 8px; cursor: row-resize; background: #eee; border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); }
+  #resizer:hover { background: var(--primary-color); }
+  #detailPane {
+      height: 300px; min-height: 50px;
+      display: flex; gap: 0; background: #fff;
+  }
+
+  .detailColumnPane { flex: 1; overflow-y: auto; padding: 20px; border-right: 1px solid #eee; }
+  .detailJsonPane { flex: 1; overflow-y: auto; padding: 20px; background: var(--bg-code); color: var(--text-code); font-family: monospace; font-size: 13px; }
+
+  /* Key-Value Grid */
+  .kv-grid { display: grid; grid-template-columns: 120px 1fr; gap: 8px; }
+  .kv-key { font-weight: bold; color: #888; font-size: 11px; text-transform: uppercase; }
+
+  /* JSON Tree (Details/Summary Hack) */
+  .json-tree details { margin-left: 15px; }
+  .json-tree summary { cursor: pointer; color: #61afef; outline: none; list-style: none; }
+  .json-tree summary::-webkit-details-marker { display: none; }
+  .json-tree summary::before { content: '▶ '; font-size: 10px; color: #56b6c2; }
+  .json-tree details[open] > summary::before { content: '▼ '; }
+  .json-leaf { margin-left: 25px; color: #98c379; }
+  .json-key { color: #e06c75; }
+  /* ---------------------------------------- */
+
 
   /* --- STATUSBAR --- */
   #statusbar {
