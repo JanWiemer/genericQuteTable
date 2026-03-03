@@ -1,5 +1,6 @@
 package org.jaw.qutetable.gentable;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.logging.Log;
 import io.quarkus.qute.Template;
 import io.quarkus.qute.TemplateInstance;
@@ -12,9 +13,13 @@ import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import org.jaw.qutetable.ExampleDataSource;
 
+import java.util.UUID;
+
 @Path("/api/table")
 public class GenericTableResource {
 
+  @Inject
+  ObjectMapper objectMapper;
   @Inject
   Template dialogGenericTable;
   @Inject
@@ -43,14 +48,16 @@ public class GenericTableResource {
 
   @Nonnull
   private TableDialogData createTableData(String object, String filter, String sortCol, Object sortDir) {
-    TableDialogData tdd = new TableDialogData("Example Table", "/api/table/data");
+    TableDialogData tdd = new TableDialogData("Example Table", "/api/table/data", objectMapper);
     tdd.col("Name", "The Name");
     tdd.col("Position", "The Position");
     tdd.col("Mail", "E-Mail Address");
     tdd.col("Status", "Status");
     tdd.col("Age", "Age of the Person");
     ExampleDataSource.getUserData().stream().filter(u -> filter == null || u.name().matches(".*" + filter + ".*")).forEach(u -> {
-      tdd.row(u.name(), u.postion(), u.eMail(), u.status(), "99");
+      TableRowData row = tdd.row(u.name(), u.postion(), u.eMail(), u.status(), "99");
+      row.detail("FullName", u.name() + " " + u.postion() + "Hero");
+      row.detail("UID", UUID.randomUUID().toString());
     });
     return tdd;
   }

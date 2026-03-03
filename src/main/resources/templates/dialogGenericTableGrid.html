@@ -13,10 +13,11 @@
       <!------------------------------------------------------------------------------------>
       <tbody id="genericTableBody">
       {#for row in data.rows}
-        <tr class="row-clickable">
+        <tr class="row-clickable" details='{row.getDetailsJson()}'>
           {#for cell in row.cells}
             <td title="{cell.description}">{cell.content}</td>
           {/for}
+          <td hidden="true" class="details">{row.details}</td>
         </tr>
       {/for}
       </tbody>
@@ -36,15 +37,24 @@
   </div>
 </div>
 <script>
+    function createKvList(map) {
+        let html = '';
+        for (const [key, value] of Object.entries(map)) {
+            html += `<div class="kv-key">$\{key}</div><div class="kv-value">$\{value}</div>`;
+        }
+        return html;
+    }
+
     const tableBody = document.getElementById('genericTableBody');
     tableBody.addEventListener('click', e => {
         const row = e.target.closest('.row-clickable');
         if (!row) return;
         document.querySelectorAll('.row-clickable').forEach(r => r.classList.remove('selected'));
         row.classList.add('selected');
-        //const data = JSON.parse(row.dataset.details);
-        //--- KV-Liste
-        document.getElementById('kvContent').innerHTML = `<div class="kv-grid">SELECTED</div>`;
+        const detailMap = JSON.parse(row.getAttribute('details'));
+        const kvList = createKvList(detailMap);
+        const innerHtml = '<div class="kv-grid">' + kvList + '</div>';
+        document.getElementById('kvContent').innerHTML = innerHtml;
         //--- JSON Baum
         document.getElementById('jsonContent').innerHTML = `SELECTED`;
     });

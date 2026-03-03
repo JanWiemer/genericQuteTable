@@ -1,20 +1,24 @@
 package org.jaw.qutetable.gentable;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
 public class TableDialogData {
 
+  final ObjectMapper objectMapper;
   public final String dialogTitle;
   public final String tableDataPath;
   public String initialFilter;
   public List<TableColumnDefinition> columns = new ArrayList<>();
   public List<TableRowData> rows = new ArrayList<>();
 
-  public TableDialogData(String dialogTitle, String tableDataPath) {
+  public TableDialogData(String dialogTitle, String tableDataPath, ObjectMapper objectMapper) {
     this.dialogTitle = dialogTitle;
     this.tableDataPath = tableDataPath;
+    this.objectMapper = objectMapper;
   }
 
   public TableDialogData initialFilter(String initialFilter) {
@@ -31,10 +35,11 @@ public class TableDialogData {
     return col(name, null);
   }
 
-  public TableDialogData row(String... cellsInRow) {
+  public TableRowData row(String... cellsInRow) {
     List<TableCellData> cellList = Stream.of(cellsInRow).map(s -> new TableCellData(s, null)).toList();
-    rows.add(new TableRowData(cellList));
-    return this;
+    TableRowData row = new TableRowData(this, cellList);
+    rows.add(row);
+    return row;
   }
 
 }
