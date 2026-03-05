@@ -44,13 +44,24 @@
 
   /* --- MAIN CONTENT --- */
   main { flex-grow: 1; display: flex; flex-direction: column; padding: 1.5rem; overflow: hidden; }
-
   .toolbar { margin-bottom: 1rem; display: flex; gap: 0.5rem; flex-shrink: 0; }
   .search-group { display: flex; flex-grow: 1; max-width: 600px; border-radius: 0.5rem; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
   .search-input { flex-grow: 1; padding: 0.7rem 1rem; border: 1px solid var(--border-color); outline: none; }
   .server-btn { background: var(--primary); color: white; border: none; padding: 0 1.25rem; cursor: pointer; font-weight: 600; }
 
   /* --- TABLE --- */
+  .disableOnLoad.htmx-request {
+      opacity: 0.4;
+      filter: grayscale(1);
+      pointer-events: none;
+      transition: all 0.2s ease;
+  }
+  .disabled {
+      opacity: 0.4;
+      filter: grayscale(1);
+      transition: all 0.2s ease;
+  }
+
   .table-wrapper { background: var(--bg-card); border-radius: 0.5rem; border: 1px solid var(--border-color); overflow: auto; flex-grow: 1; }
 
   table { width: 100%; border-collapse: collapse; font-size: 0.825rem; min-width: 700px; }
@@ -75,7 +86,7 @@
       display: flex; gap: 0; background: #fff;
   }
 
-  .detailColumnPane { flex: 1; overflow-y: auto; padding: 20px; border-right: 1px solid #eee; }
+  .detailColumnPane { flex: 1; overflow-y:  auto; padding: 20px; border-right: 1px solid #eee; }
   .detailJsonPane { flex: 1; overflow-y: auto; padding: 20px; background: var(--bg-code); color: var(--text-code); font-family: monospace; font-size: 13px; }
 
   /* Key-Value Grid */
