@@ -1,4 +1,4 @@
-{@org.jaw.qutetable.gentable.TableDialogData data}
+{@org.jaw.qutetable.gentable.data.TableDialogData data}
 <div id="masterDetailPane" class="resize-wrapper">
   <div id="mainTablePane">
     <table id="genericTable">
@@ -13,11 +13,10 @@
       <!------------------------------------------------------------------------------------>
       <tbody id="genericTableBody">
       {#for row in data.rows}
-        <tr class="row-clickable" details='{row.getDetailsJson()}'>
+        <tr class="row-clickable" details='{row.getDetailsJson()}' jsonDetails='{row.jsonDetails}'>
           {#for cell in row.cells}
             <td title="{cell.description}">{cell.content}</td>
           {/for}
-          <td hidden="true" class="details">{row.details}</td>
         </tr>
       {/for}
       </tbody>
@@ -30,9 +29,9 @@
       <h4>Details</h4>
       <div id="kvContent"><p style="color: #999;">Select a Row...</p></div>
     </div>
-    <div class="detailJsonPane">
-      <h4>JSON Inspector</h4>
-      <div id="jsonContent" class="json-tree"></div>
+    <div id="detailJsonPane" class="detailJsonPane">
+      <h4>JSON Details</h4>
+      <div id="jsonContent" class="jsonContent"></div>
     </div>
   </div>
 </div>
@@ -49,6 +48,63 @@
             return html;
         }
 
+        function createJsonTree(data, isLast = true) {
+            if (typeof data !== 'object' || data === null) {
+                const valSpan = createJsonValueSpan(data);
+                if (!isLast) valSpan.append(',');
+                return valSpan;
+            }
+            const isArray = Array.isArray(data);
+            const container = document.createElement('div');
+            container.className = 'json-node';
+            const toggle = document.createElement('span');
+            toggle.className = 'toggle';
+            toggle.textContent = '▼';
+            container.appendChild(toggle);
+            container.appendChild(document.createTextNode(isArray ? '[' : '{'));
+            const list = document.createElement('ul');
+            const keys = Object.keys(data);
+            keys.forEach((key, index) => {
+                const li = document.createElement('li');
+                const lastInLevel = index === keys.length - 1;
+                if (!isArray) {
+                    const keySpan = document.createElement('span');
+                    keySpan.className = 'key';
+                    keySpan.textContent = `"$\{key}": `;
+                    li.appendChild(keySpan);
+                }
+                li.appendChild(createJsonTree(data[key], lastInLevel));
+                list.appendChild(li);
+            });
+            container.appendChild(list);
+            const closingText = (isArray ? ']' : '}') + (isLast ? '\n' : ', ');
+            container.appendChild(document.createTextNode(closingText));
+            toggle.onclick = (e) => {
+                e.stopPropagation();
+                const isHidden = list.classList.toggle('hidden');
+                toggle.textContent = isHidden ? '▶' : '▼';
+            };
+            return container;
+        }
+
+        function createJsonValueSpan(val) {
+            const span = document.createElement('span');
+            if (typeof val === 'string') {
+                span.className = 'string';
+                span.textContent = `"$\{val}"`;
+            } else if (typeof val === 'number') {
+                span.className = 'number';
+                span.textContent = val;
+            } else if (typeof val === 'boolean') {
+                span.className = 'boolean';
+                span.textContent = val;
+            } else {
+                span.className = 'null';
+                span.textContent = 'null';
+            }
+            return span;
+        }
+
         document.getElementById('genericTableBody').addEventListener('click', e => {
             const row = e.target.closest('.row-clickable');
             if (!row) return;
@@ -59,7 +115,14 @@
             const innerHtml = '<div class="kv-grid">' + kvList + '</div>';
             document.getElementById('kvContent').innerHTML = innerHtml;
             //--- JSON Baum
-            document.getElementById('jsonContent').innerHTML = `SELECTED`;
+            let output = document.getElementById('jsonContent');
+            try {
+                const parsed = JSON.parse(row.getAttribute('jsonDetails'));
+                output.innerHTML = "";
+                output.appendChild(createJsonTree(parsed));
+            } catch (e) {
+                output.innerHTML = `<span class="error">Ungültiges JSON: $\{e.message}</span>`;
+            }
         });
 
         //==================================

@@ -1,4 +1,4 @@
-package org.jaw.qutetable.gentable;
+package org.jaw.qutetable.gentable.data;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 

@@ -1,5 +1,6 @@
-{@org.jaw.qutetable.gentable.TableDialogData data}
+{@org.jaw.qutetable.gentable.data.TableDialogData data}
 <!---------------------------------------------------------->
+<!--suppress HtmlFormInputWithoutLabel -->
 <header style="margin-bottom:1rem;"><h1>{data.dialogTitle}</h1></header>
 <!---------------------------------------------------------->
 <div class="toolbar">,
@@ -115,7 +116,7 @@
                 if (lastWord.startsWith(":") && !lastWord.includes("=") && !lastWord.includes("~")) {
                     const columnPrefix = lastWord.substring(1).trim();
                     const matchingCols = colMap.keys().filter(s => s.startsWith(columnPrefix)).toArray();
-                    if (matchingCols !== undefined && matchingCols.length == 1) {
+                    if (matchingCols !== undefined && matchingCols.length === 1) {
                         e.target.value = val.substring(0, val.length - columnPrefix.length) + matchingCols[0];
                         localFilterTable();
                     }
@@ -126,15 +127,15 @@
         //==================================
         // HTMX Event Listeners
         //==================================
-        document.body.addEventListener('htmx:afterOnLoad', function (evt) {
+        document.body.addEventListener('htmx:afterOnLoad', function () {
             if (!document.getElementById('mainTablePane')) return;
             document.getElementById('mainTablePane').classList.remove("disabled");
         });
-        document.body.addEventListener('htmx:responseError', function (evt) {
+        document.body.addEventListener('htmx:responseError', function () {
             if (!document.getElementById('mainTablePane')) return;
             document.getElementById('mainTablePane').classList.add("disabled");
         });
-        document.body.addEventListener('htmx:sendError', function (evt) {
+        document.body.addEventListener('htmx:sendError', function () {
             if (!document.getElementById('mainTablePane')) return;
             document.getElementById('mainTablePane').classList.add("disabled");
         });

@@ -12,6 +12,8 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import org.jaw.qutetable.ExampleDataSource;
+import org.jaw.qutetable.gentable.data.TableDialogData;
+import org.jaw.qutetable.gentable.data.TableRowData;
 
 import java.util.UUID;
 
@@ -28,7 +30,7 @@ public class GenericTableResource {
   @GET
   @Produces(MediaType.TEXT_HTML)
   public TemplateInstance getGenericTable(@QueryParam("object") String object) {
-    Log.info("get generic table: " + object);
+    Log.info("select generic table: " + object);
     TableDialogData tdd = createTableData(object, null, null, null);
     return dialogGenericTable.data("data", tdd);
   }
