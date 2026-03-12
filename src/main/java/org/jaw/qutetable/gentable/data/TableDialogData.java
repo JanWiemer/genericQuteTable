@@ -36,7 +36,11 @@ public class TableDialogData {
   }
 
   public TableRowData row(String... cellsInRow) {
-    List<TableCellData> cellList = Stream.of(cellsInRow).map(s -> new TableCellData(s, null)).toList();
+    return row(List.of(cellsInRow));
+  }
+
+  public TableRowData row(List<String> cellsInRow) {
+    List<TableCellData> cellList = cellsInRow.stream().map(s -> new TableCellData(s, null)).toList();
     TableRowData row = new TableRowData(this, cellList);
     rows.add(row);
     return row;

@@ -12,21 +12,42 @@ import java.util.stream.Stream;
 
 public class TableDialogDefinition<T> {
 
-  public final String dialogId;
-  public final Class<T> dialogObjectType;
-  public final Supplier<Stream<T>> dataSource;
+  private final String dialogId;
+  private final Class<T> dialogObjectType;
+  private Supplier<Stream<T>> dataSource;
   private final List<TableDialogColumnDefinition<T>> columns = new ArrayList<>();
 
   public TableDialogDefinition(String dialogId, Class<T> type) {
     this.dialogId = dialogId;
     this.dialogObjectType = type;
-    this.dataSource = null;
   }
 
-  public TableDialogDefinition(String dialogId, Class<T> type, Supplier<Stream<T>> dataSource) {
-    this.dialogId = dialogId;
-    this.dialogObjectType = type;
+  public String getDialogId() {
+    return dialogId;
+  }
+
+  public Class<T> getDialogObjectType() {
+    return dialogObjectType;
+  }
+
+  public Supplier<Stream<T>> getDataSource() {
+    return dataSource;
+  }
+
+  public List<TableDialogColumnDefinition<T>> getColumns() {
+    return columns;
+  }
+//=======================================================================================================
+  // DATA SOURCE
+  //=======================================================================================================
+
+  public TableDialogDefinition<T> from(Supplier<Stream<T>> dataSource) {
     this.dataSource = dataSource;
+    return this;
+  }
+
+  public TableDialogDefinition<T> fromList(Supplier<List<T>> dataSource) {
+    return this.from(() -> dataSource.get().stream());
   }
 
   //=======================================================================================================
@@ -175,7 +196,7 @@ public class TableDialogDefinition<T> {
         return String.valueOf(o);
       }
     };
-    getColumnsMatching(forColumns).forEach(col-> format(col, formatter));
+    getColumnsMatching(forColumns).forEach(col -> format(col, formatter));
     return this;
   }
 
@@ -199,7 +220,7 @@ public class TableDialogDefinition<T> {
         return String.valueOf(o);
       }
     };
-    getColumnsMatching(forColumns).forEach(col-> format(col, formatter));
+    getColumnsMatching(forColumns).forEach(col -> format(col, formatter));
     return this;
   }
 

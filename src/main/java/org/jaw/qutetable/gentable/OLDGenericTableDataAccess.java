@@ -22,16 +22,14 @@ import io.quarkus.qute.TemplateInstance;
 import jakarta.ws.rs.core.MultivaluedMap;
 
 public class OLDGenericTableDataAccess {
-
-  private final Engine quteEngine;
+/*
   private final String dataPath;
   private int maxNumberOfElements;
   private int registeredClassSequence = 0;
 
   private final Map<String, GenericClassData<?>> registeredClasses = new HashMap<>();
 
-  public OLDGenericTableDataAccess(Engine quteEngine, String dataPath, int maxNumberOfElements) {
-    this.quteEngine = quteEngine;
+  public OLDGenericTableDataAccess( String dataPath, int maxNumberOfElements) {
     this.dataPath = dataPath;
     this.maxNumberOfElements = maxNumberOfElements;
   }
@@ -155,61 +153,5 @@ public class OLDGenericTableDataAccess {
     }
     return dataStream;
   }
-
-  private static String tableTemplate(GenericClassData<?> classData) {
-    try {
-      String NL = "\n";
-      StringBuilder b = new StringBuilder();
-      b.append("<table class=\"sortable\" >").append(NL);
-      b.append(" <tr>");
-      for (FieldData field : classData.getFields()) {
-        String sortStr = "{sort_" + field.name + "}";
-        b.append("<th style='min-width:" + (field.name.length()) + "ch'>").append(field.header);
-        b.append("  <input style='width:1em' name=\"sort." + field.name + "\" type=\"text\"");
-        b.append("     readonly=true maxlength=1 size=1 style=\"text-align: center;\"");
-        b.append("     value=\"" + sortStr + "\"");
-        b.append("            hx-post=\"{data_path}\"");
-        b.append("            hx-trigger=\"click\"");
-        b.append("            hx-target=\"#generic-table\" hx-swap=\"innerHTML\"");
-        b.append("            hx-include=\"[name=searchRow], #class\"");
-        b.append("            hx-vals='{\"sort\": \"" + field.name + "\"}'");
-        b.append("  />");
-        b.append("</th>");
-      }
-      b.append("</tr>").append(NL);
-      b.append(" <tr name=searchRow>");
-      for (FieldData field : classData.getFields()) {
-        String patternStr = "{pattern_" + field.name + "}";
-        b.append("<td>");
-        b.append("  <input style='width:100%' name=\"search." + field.name + "\" type=\"search\"");
-        b.append("         value=\"" + patternStr + "\"");
-        b.append("            hx-post=\"{data_path}\"");
-        b.append("            hx-trigger=\"changed, search\"");
-        b.append("            hx-target=\"#generic-table\" hx-swap=\"innerHTML\"");
-        b.append("            hx-include=\"[name=searchRow], #class\"");
-        b.append("  >");
-        b.append("</td>");
-      }
-      b.append("</tr>").append(NL);
-      b.append("  {#for input in inputs}").append(NL);
-      b.append("    <tr>");
-      for (FieldData field : classData.getFields()) {
-        b.append("<td>{input.").append(field.name).append("}</td>");
-      }
-      b.append("    </tr>").append(NL);
-      b.append("  {/for}").append(NL);
-      b.append("</table>").append(NL);
-      b.append("{numberOfResultsDisplayed}/{numberOfResultsTotal} elements displayed");
-      return b.toString();
-    } catch (
-
-    Exception e) {
-      return e.toString();
-    }
-  }
-
-  //  public static void main(String[] args) { // view example template
-  //    System.out.println(tableTemplate(new GenericClassData<>("Item", Item.class).addAllFields()));
-  //  }
-
+*/
 }
