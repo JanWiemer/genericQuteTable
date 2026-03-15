@@ -12,18 +12,23 @@ import java.util.stream.Stream;
 
 public class TableDialogDefinition<T> {
 
-  private final String dialogId;
+  private final String dialogMenuPath;
   private final Class<T> dialogObjectType;
+  private String dialogResourcePath;
   private Supplier<Stream<T>> dataSource;
   private final List<TableDialogColumnDefinition<T>> columns = new ArrayList<>();
 
-  public TableDialogDefinition(String dialogId, Class<T> type) {
-    this.dialogId = dialogId;
-    this.dialogObjectType = type;
+  public TableDialogDefinition(String dialogMenuPath, Class<T> dialogObjectType) {
+    this.dialogMenuPath = dialogMenuPath;
+    this.dialogObjectType = dialogObjectType;
   }
 
-  public String getDialogId() {
-    return dialogId;
+  public String getDialogMenuPath() {
+    return dialogMenuPath;
+  }
+
+  public String getDialogResourcePath() {
+    return dialogResourcePath;
   }
 
   public Class<T> getDialogObjectType() {
@@ -37,7 +42,16 @@ public class TableDialogDefinition<T> {
   public List<TableDialogColumnDefinition<T>> getColumns() {
     return columns;
   }
-//=======================================================================================================
+  //=======================================================================================================
+  // GENERAL DIALOG DATA
+  //=======================================================================================================
+
+  public TableDialogDefinition<T> resourcePath(String dialogResourcePath) {
+    this.dialogResourcePath = dialogResourcePath;
+    return this;
+  }
+
+  //=======================================================================================================
   // DATA SOURCE
   //=======================================================================================================
 

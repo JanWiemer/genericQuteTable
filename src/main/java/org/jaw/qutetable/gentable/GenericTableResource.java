@@ -10,7 +10,6 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
-import org.jaw.qutetable.ExampleDataSource;
 import org.jaw.qutetable.gentable.data.TableDialogData;
 import org.jaw.qutetable.gentable.data.TableRowData;
 import org.jaw.qutetable.gentable.definition.TableDialogDefinition;
@@ -40,7 +39,7 @@ public class GenericTableResource {
   @Produces(MediaType.TEXT_HTML)
   public TemplateInstance getGenericTable(@QueryParam("dialog") String dialog) {
     Log.info("select generic table dialog: " + dialog);
-    return Templates.tableDialog(createTableData(dialog, null, null, null));
+    return Templates.tableDialog(createTableData(dialog, null, null, null, 20));
   }
 
   @GET
@@ -50,41 +49,35 @@ public class GenericTableResource {
                                         @QueryParam("dialog") String dialog, //
                                         @QueryParam("filter") String filter, //
                                         @QueryParam("tableSortColumnName") String sortCol, //
-                                        @QueryParam("tableSortDir") String sortCDir) {
-    Log.info("get table data for " + dialog + " with filter: " + filter + ", sortCol: " + sortCol + ", sortCDir: " + sortCDir);
-    return Templates.tableGrid(createTableData(dialog, filter, sortCol, sortCDir));
+                                        @QueryParam("tableSortDir") String sortCDir, //
+                                        @QueryParam("maxRows") Integer maxRows //
+  ) {
+    Log.info("get table data for " + dialog + " with filter: " + filter + ", sortCol: " + sortCol + ", sortCDir: " + sortCDir + ", maxRows: " + maxRows);
+    return Templates.tableGrid(createTableData(dialog, filter, sortCol, sortCDir, maxRows));
   }
 
-  private <T> TableDialogData createTableData(String dialogName, String filter, String sortCol, Object sortDir) {
+  private <T> TableDialogData createTableData(String dialogName, String filter, String sortCol, Object sortDir, Integer maxRows) {
     @SuppressWarnings("unchecked")
     TableDialogDefinition<T> dialog = tableRegistry.getDialogTableDefinitions(dialogName);
-    TableDialogData tdd = new TableDialogData(dialogName, "/api/table/data", objectMapper);
-    if (dialog != null) {
-      for (var col : dialog.getColumns()) {
-        tdd.col(col.header(), col.id());
-      }
-      Stream<T> dataStream = dialog.getDataSource().get();
-      dataStream.forEach(rowData -> {
-        List<String> row = new ArrayList<>();
-        for (var col : dialog.getColumns()) {
-          row.add(col.getStringAccessor().apply(rowData));
-        }
-        TableRowData rowDef = tdd.row(row);
-        rowDef.detail("FullName", "Hero");
-        rowDef.detail("UID", UUID.randomUUID().toString());
-      });
-    } else {
-      tdd.col("Name", "The Name");
-      tdd.col("Position", "The Position");
-      tdd.col("Mail", "E-Mail Address");
-      tdd.col("Status", "Status");
-      tdd.col("Age", "Age of the Person");
-      ExampleDataSource.getUserData().stream().filter(u -> filter == null || u.name().matches(".*" + filter + ".*")).forEach(u -> {
-        TableRowData row = tdd.row(u.name(), u.postion(), u.eMail(), u.status(), "99");
-        row.detail("FullName", u.name() + " " + u.postion() + "Hero");
-        row.detail("UID", UUID.randomUUID().toString());
-      });
+    if (dialog == null) {
+      Log.error("Dialog " + dialogName + " not found");
+      tableRegistry.getDialogTableDefinitions().forEach(tdd -> Log.info(" - found: " + tdd.getDialogMenuPath()));
+      throw new IllegalArgumentException("Dialog " + dialogName + " not found");
     }
+    TableDialogData tdd = new TableDialogData(dialogName, dialog.getDialogResourcePath(), objectMapper);
+    for (var col : dialog.getColumns()) {
+      tdd.col(col.header(), col.id());
+    }
+    Stream<T> dataStream = dialog.getDataSource().get();
+    dataStream.limit(maxRows).forEach(rowData -> {
+      List<String> row = new ArrayList<>();
+      for (var col : dialog.getColumns()) {
+        row.add(col.getStringAccessor().apply(rowData));
+      }
+      TableRowData rowDef = tdd.row(row);
+      rowDef.detail("FullName", "Hero");
+      rowDef.detail("UID", UUID.randomUUID().toString());
+    });
     return tdd;
   }
 

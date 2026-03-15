@@ -12,11 +12,12 @@
            onkeyup="localFilterTable()">
     <button class="server-btn, disableOnLoad"
             hx-get="{data.tableDataPath}"
-            hx-include="#tableFilterInput, #tableSortColumnName, #tableSortDirection"
+            hx-include="#tableFilterInput, #tableSortColumnName, #tableSortDirection, #maxRowsInput"
             hx-target="#tableArea" hx-swap="innerHTML"
             hx-indicator=".disableOnLoad"
     >Server
     </button>
+      <input type="number" id="maxRowsInput" name="maxRows" class="max-rows-input" value="20">
   </div>
   <input type="hidden" name="tableSortColumnIdx" value="none">
   <input type="hidden" name="tableSortColumnName" id="tableSortColumnName" value="none">

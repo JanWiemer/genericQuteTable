@@ -1,29 +1,32 @@
 package org.jaw.qutetable;
 
 import io.quarkus.logging.Log;
-import io.quarkus.qute.Template;
+import io.quarkus.qute.CheckedTemplate;
 import io.quarkus.qute.TemplateInstance;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.*;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
+import org.acme.repository.CarRepository;
 import org.jaw.qutetable.example.Person;
 import org.jaw.qutetable.example.PersonRepository;
 import org.jaw.qutetable.gentable.GenericTableResource;
 import org.jaw.qutetable.gentable.definition.TableRegistry;
 
-import java.util.List;
-
 @Path("/")
 public class ApplicationResource {
 
-  @Inject
-  Template application;
-
+  @CheckedTemplate(basePath = "")
+  public static class Templates {
+    public static native TemplateInstance application(ApplicationMenu menu);
+  }
 
   @Inject
   GenericTableResource genericTableResource;
 
   private final PersonRepository personRepo = new PersonRepository();
+  private final CarRepository carRepo = new CarRepository();
 
   @GET
   @Produces(MediaType.TEXT_HTML)
@@ -31,12 +34,10 @@ public class ApplicationResource {
     Log.info("Load Application");
     TableRegistry reg = genericTableResource.tableRegistry;
     reg.add("SYS.THREADS", Thread.class).from(() -> Thread.getAllStackTraces().keySet().stream()).addAllFields();
-    reg.add("PERSONS", Person.class).from(() -> personRepo.getAllPersons().stream()).addAllFields();
-
-    List<DialogDefinition> dialogs = reg.getDialogDefinitions();
-    dialogs.add(new DialogDefinition("User Dialog (Generic)", "/api/table?dialog=User")); // custom dialog
-    dialogs.add(new DialogDefinition("User Dialog", "/api/dialog/user")); // custom dialog
-    return application.data("dialogs", dialogs);
+    reg.add("EXAMPLES.PERSONS", Person.class).from(() -> personRepo.getAllPersons().stream()).addAllFields();
+    reg.add("EXAMPLES.CARS", CarRepository.Car.class).from(() -> carRepo.getCars().stream()).addAllFields();
+    ApplicationMenu appMenu = reg.getApplicationMenu();
+    return Templates.application(appMenu.build());
   }
 
 }
