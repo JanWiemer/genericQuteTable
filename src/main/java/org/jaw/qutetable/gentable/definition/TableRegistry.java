@@ -12,6 +12,7 @@ public class TableRegistry {
   public <T> TableDialogDefinition<T> add(String name, Class<T> type) {
     TableDialogDefinition<T> tdd = new TableDialogDefinition<>(name, type);
     tdd.resourcePath("/api/table?dialog=" + name);
+    tdd.resourceDataPath("/api/table/data?dialog=" + name);
     registeredDialogs.put(name, tdd);
     return tdd;
   }

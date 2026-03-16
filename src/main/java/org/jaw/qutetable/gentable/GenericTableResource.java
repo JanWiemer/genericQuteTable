@@ -64,12 +64,12 @@ public class GenericTableResource {
       tableRegistry.getDialogTableDefinitions().forEach(tdd -> Log.info(" - found: " + tdd.getDialogMenuPath()));
       throw new IllegalArgumentException("Dialog " + dialogName + " not found");
     }
-    TableDialogData tdd = new TableDialogData(dialogName, dialog.getDialogResourcePath(), objectMapper);
+    TableDialogData tdd = new TableDialogData(dialogName, dialog.getDialogResourceDataPath(), objectMapper);
     for (var col : dialog.getColumns()) {
       tdd.col(col.header(), col.id());
     }
     Stream<T> dataStream = dialog.getDataSource().get();
-    dataStream.limit(maxRows).forEach(rowData -> {
+    dataStream.limit(maxRows== null ? 20 : maxRows).forEach(rowData -> {
       List<String> row = new ArrayList<>();
       for (var col : dialog.getColumns()) {
         row.add(col.getStringAccessor().apply(rowData));

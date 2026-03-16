@@ -5,7 +5,10 @@ import io.quarkus.logging.Log;
 import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -15,6 +18,7 @@ public class TableDialogDefinition<T> {
   private final String dialogMenuPath;
   private final Class<T> dialogObjectType;
   private String dialogResourcePath;
+  private String dialogResourceDataPath;
   private Supplier<Stream<T>> dataSource;
   private final List<TableDialogColumnDefinition<T>> columns = new ArrayList<>();
 
@@ -29,6 +33,10 @@ public class TableDialogDefinition<T> {
 
   public String getDialogResourcePath() {
     return dialogResourcePath;
+  }
+
+  public String getDialogResourceDataPath() {
+    return dialogResourceDataPath;
   }
 
   public Class<T> getDialogObjectType() {
@@ -48,6 +56,11 @@ public class TableDialogDefinition<T> {
 
   public TableDialogDefinition<T> resourcePath(String dialogResourcePath) {
     this.dialogResourcePath = dialogResourcePath;
+    return this;
+  }
+
+  public TableDialogDefinition<T> resourceDataPath(String dialogResourceDataPath) {
+    this.dialogResourceDataPath = dialogResourceDataPath;
     return this;
   }
 
