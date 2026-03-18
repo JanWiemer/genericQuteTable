@@ -1,59 +1,38 @@
 {@org.jaw.qutetable.gentable.data.TableDialogData data}
 <!---------------------------------------------------------->
 <!--suppress HtmlFormInputWithoutLabel -->
-<header style="margin-bottom:1rem;"><h1>{data.dialogTitle}</h1></header>
+<div class="dialog-header"><b>Dialog:</b> {data.dialogTitle}</div>
 <!---------------------------------------------------------->
-<div class="toolbar">,
-  <div class="search-group">
-    <label for="tableFilterInput" , hidden>Search: </label>
-    <input type="text" id="tableFilterInput" name="filter" class="search-input"
+<div class="toolbar">
+  <!----------------------------------------->
+  <!-- ************ SEARCH BAR *********** -->
+  <div class="dialog-search-group">
+    <input id="tableSearchField" type="text"
            placeholder="Search (fulltext or :column (:name=Max) - STRG+SPACE"
            value="{data.initialFilter}"
            onkeyup="localFilterTable()">
     <button class="server-btn, disableOnLoad"
             hx-get="{data.tableDataPath}"
-            hx-include="#tableFilterInput, #tableSortColumnName, #tableSortDirection, #maxRowsInput"
+            hx-include="#tableSearchField, #tableSortColumnName, #tableSortDirection, #maxRowsInput"
             hx-target="#tableArea" hx-swap="innerHTML"
             hx-indicator=".disableOnLoad"
-    >Server
-    </button>
-      <input type="number" id="maxRowsInput" name="maxRows" class="max-rows-input" value="20">
-  </div>
-  <input type="hidden" name="tableSortColumnIdx" value="none">
-  <input type="hidden" name="tableSortColumnName" id="tableSortColumnName" value="none">
-  <input type="hidden" name="tableSortDirection" id="tableSortDirection" value="none">
-  <input name="tableSortSpec" value="" style="border:none" disabled>
+    >Server</button>
+    <label>#Rows:</label>
+    <input type="number" id="maxRowsInput" name="maxRows" value="20">
+    <input type="hidden" id="tableSortColumnIdx" value="none">
+    <input type="hidden" id="tableSortColumnName" value="none">
+    <input type="hidden" id="tableSortDirection" value="none">
+    <input id="tableSortSpec" value="" disabled></div>
 </div>
-<!---------------------------------------------------------->
-<div id="tableArea" class="table-wrapper, disableOnLoad">
+<!----------------------------------------->
+<!-- ************ TABLE AREA *********** -->
+<div id="tableArea" class="table-wrapper disableOnLoad">
     {#include generictable/tableGrid/}
 </div>
 <!---------------------------------------------------------->
 <!---------------------------------------------------------->
 <script>
     {
-        //==================================
-        // Sorting locally on client
-        //==================================
-        let sortOrder = 1;
-        let lastIdx = -1;
-
-        function localSortTable(idx) {
-            const tbody = document.getElementById("genericTableBody");
-            const rows = Array.from(tbody.rows);
-            sortOrder = (lastIdx === idx) ? sortOrder * -1 : 1;
-            lastIdx = idx;
-            let sortColumn = document.querySelectorAll("th")[idx];
-            document.querySelectorAll("th").forEach(th => th.classList.remove("asc", "desc"));
-            sortColumn.classList.add(sortOrder === 1 ? "asc" : "desc");
-            document.querySelector("input[name='tableSortColumnIdx']").value = idx;
-            document.querySelector("input[name='tableSortColumnName']").value = sortColumn.innerHTML;
-            document.querySelector("input[name='tableSortDirection']").value = (sortOrder === 1 ? "asc" : "desc");
-            document.querySelector("input[name='tableSortSpec']").value = (sortOrder === 1 ? "ASC" : "DESC") + " by " + sortColumn.innerHTML;
-            rows.sort((a, b) => sortOrder * a.cells[idx].innerText.localeCompare(b.cells[idx].innerText));
-            rows.forEach(r => tbody.appendChild(r));
-        }
-
         //==================================
         // Filtering locally on client
         //==================================
@@ -62,7 +41,7 @@
         colMap.set("{col.name}".toLowerCase(), {col_index});
       {/for}
         function localFilterTable() {
-            const filterQuery = document.getElementById("tableFilterInput").value;
+            const filterQuery = document.getElementById("tableSearchField").value;
             const rows = document.querySelectorAll("#genericTableBody tr");
             const conditions = filterQuery.split(/&|and/i).map(c => c.trim()).filter(c => c !== "");
             rows.forEach(row => {
@@ -108,7 +87,7 @@
         //==================================
         // Autocompletion column filter names
         //==================================
-        document.getElementById("tableFilterInput").addEventListener("keydown", function (e) {
+        document.getElementById("tableSearchField").addEventListener("keydown", function (e) {
             if (e.ctrlKey && e.code === "Space") {
                 e.preventDefault();
                 const val = e.target.value;
@@ -124,6 +103,28 @@
                 }
             }
         });
+
+        //==================================
+        // Sorting locally on client
+        //==================================
+        let sortOrder = 1;
+        let lastIdx = -1;
+
+        function localSortTable(idx) {
+            const tbody = document.getElementById("genericTableBody");
+            const rows = Array.from(tbody.rows);
+            sortOrder = (lastIdx === idx) ? sortOrder * -1 : 1;
+            lastIdx = idx;
+            let sortColumn = document.querySelectorAll("th")[idx];
+            document.querySelectorAll("th").forEach(th => th.classList.remove("asc", "desc"));
+            sortColumn.classList.add(sortOrder === 1 ? "asc" : "desc");
+            document.querySelector("input[id='tableSortColumnIdx']").value = idx;
+            document.querySelector("input[id='tableSortColumnName']").value = sortColumn.innerHTML;
+            document.querySelector("input[id='tableSortDirection']").value = (sortOrder === 1 ? "asc" : "desc");
+            document.querySelector("input[id='tableSortSpec']").value = (sortOrder === 1 ? "ASC" : "DESC") + " by " + sortColumn.innerHTML;
+            rows.sort((a, b) => sortOrder * a.cells[idx].innerText.localeCompare(b.cells[idx].innerText));
+            rows.forEach(r => tbody.appendChild(r));
+        }
 
         //==================================
         // HTMX Event Listeners

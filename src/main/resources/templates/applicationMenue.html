@@ -1,10 +1,10 @@
 {@org.jaw.qutetable.ApplicationMenu menu}
 <div class="sidebar-header">
-  <span class="logo">Generic Table App</span>
-  <button class="toggle-btn" onclick="document.getElementById('sidebar').classList.toggle('collapsed')">☰</button>
+  <span class="menu-title">Dialog Tree</span>
+  <button class="sidebar-toggle-button" onclick="document.getElementById('app-sidebar-left').classList.toggle('collapsed')">☰</button>
 </div>
-<nav class="sidebar-menu">
-  <ul style="list-style: none; padding: 0;">
+<nav class="menu-area">
+  <ul class="menue-list">
     {#for menuItem in menu.flatMenuItems}
       <li id="node-{menuItem.fullPath}" class="menu-item"
           data-level="{menuItem.level}"
@@ -12,12 +12,13 @@
           data-parent="{menuItem.parentPath}"
           style="padding-left: {menuItem.padding}; {#if menuItem.level > 0}display: none;{/if}">
         {#if menuItem.isLeaf}
-          <a class="menu-link" hx-get={menuItem.dialogResourcePath} hx-target="#dialogArea"hx-swap="innerHTML">
-            <span class="icon">📄</span> {menuItem.label}
-          </a>
+          <button class="menu-button menu-link"
+                  hx-get={menuItem.dialogResourcePath} hx-target="#dialogArea" hx-swap="innerHTML">
+            <span class="menu-icon"></span> {menuItem.label}
+          </button>
         {#else}
-          <button class="menu-node" onclick="toggleMenu('{menuItem.fullPath}', {menuItem.level})">
-            <span class="icon">▶</span> {menuItem.label}
+          <button class="menu-button menu-node" onclick="toggleMenu('{menuItem.fullPath}', {menuItem.level})">
+            <span class="menu-icon">▶</span> {menuItem.label}
           </button>
         {/if}
       </li>

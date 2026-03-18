@@ -1,9 +1,9 @@
 {@org.jaw.qutetable.gentable.data.TableDialogData data}
-<div id="masterDetailPane" class="resize-wrapper">
-  <div id="mainTablePane">
-    <table id="genericTable">
+<div id="masterDetailPane" class="resize-container">
+  <div id="mainTablePane" class="main-table resize-top">
+    <table id="genericTable" class="table">
       <!------------------------------------------------------------------------------------>
-      <thead id="genericTableHeader">
+      <thead id="genericTableHeader" class="table-header">
       <tr>
         {#for col in data.columns}
           <th title="{col.description}" , onclick="localSortTable({col_index})">{col.name}</th>
@@ -11,7 +11,7 @@
       </tr>
       </thead>
       <!------------------------------------------------------------------------------------>
-      <tbody id="genericTableBody">
+      <tbody id="genericTableBody" class="table-body">
       {#for row in data.rows}
         <tr class="row-clickable" details='{row.getDetailsJson()}' jsonDetails='{row.jsonDetails}'>
           {#for cell in row.cells}
@@ -22,9 +22,9 @@
       </tbody>
       <!------------------------------------------------------------------------------------>
     </table>
+    <div id="resizeSeparator" class="resize-separator"></div>
   </div>
-  <div id="resizer"></div>
-  <div id="detailPane">
+  <div id="detailPane" class="resize-bottom">
     <div class="detailColumnPane">
       <h4>Details</h4>
       <div id="kvContent"><p style="color: #999;">Select a Row...</p></div>
@@ -124,29 +124,6 @@
                 output.innerHTML = `<span class="error">Ungültiges JSON: $\{e.message}</span>`;
             }
         });
-
-        //==================================
-        // RESIZER
-        //==================================
-        const detailPane = document.getElementById('detailPane');
-        let isResizing = false;
-        let startY = 0;
-        let startHeight = 0;
-        document.getElementById('resizer').addEventListener('mousedown', e => {
-            isResizing = true
-            startY = e.clientY;
-            startHeight = detailPane.offsetHeight;
-        });
-        document.addEventListener('mousemove', e => {
-            if (!isResizing) return;
-            const yDiff = e.clientY - startY;
-            const newHeight = startHeight - yDiff;
-            if (newHeight > 100 && newHeight < window.innerHeight * 0.8) {
-                detailPane.style.height = newHeight + 'px';
-            }
-        });
-        document.addEventListener('mouseup', () => isResizing = false);
-
 
     }
 </script>

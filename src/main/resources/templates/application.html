@@ -7,22 +7,22 @@
 </head>
 <body>
 <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.8/dist/htmx.min.js"></script>
+<header class="app-header">Generic Table Demo Application</header>
 <div class="app-container" hx-on::beforeSend="interceptHTMX(event)">
-  <aside id="sidebar">
+  <aside id = "app-sidebar-left" class="app-sidebar-left">
       {#include applicationMenue.html /}
   </aside>
-  <main>
-    <div id="dialogArea">
+  <main class="app-main-area">
+    <div id="dialogArea" class="app-dialog-area">
       <h3>Select a Dialog!</h3>
     </div>
   </main>
 </div>
-<footer id="statusbar">
+<footer id="statusbar"  class="app-footer">
   <div>
     Status: <span id="requestStatus" class="status-val">Ready</span> |
     Query: <span id="statusText" class="status-val">-</span>
   </div>
-  <div style="opacity:0.5">HTMX Intercept Active</div>
 </footer>
 <script>
     //==================================
