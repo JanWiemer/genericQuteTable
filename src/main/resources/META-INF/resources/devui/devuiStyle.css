@@ -31,10 +31,12 @@
 /* --- Main Table --- */
 .main-table    { border: 1px solid black; border-radius: 0.5rem; padding:2px; }
 .main-table th { position:sticky; top:0; z-index:1; background-color:lightgrey; }
-.asc::after    { content: ' ↑'; color: var(--primary); }
-.desc::after   { content: ' ↓'; color: var(--primary); }
-.row-clickable { cursor: pointer; }
-.row-clickable.selected { background:rgba(0,0,0,5%); }
+.main-table th::after      { content: ' -'; color:lightgrey; padding-:1px; }
+.main-table th.asc::after  { content: ' ↑'; color:black; }
+.main-table th.desc::after { content: ' ↓'; color:black; }
+.row-clickable          { cursor: pointer; }
+.row-clickable:hover    { background:rgba(0,0,0,2%); }
+.row-clickable.selected { background:rgba(0,0,0,10%); }
 
 /* --- Resizer --- */
 .resize-container { display:flex; flex-grow:1; flex-direction:column; height:82vh; overflow-x: hidden; overflow-y: scroll; }
@@ -42,6 +44,12 @@
 .resize-bottom    { flex: 1; display: flex; overflow: hidden; }
 
 /* --- Detail Area --- */
-.detailColumnPane { overflow-y: scroll; background: rgba(0,0,0,10%); flex-grow:1; border: 1px solid black; border-radius: 0.5rem; padding:2px; }
-.detailJsonPane   { overflow-y: scroll; background: rgba(0,0,0,10%); flex-grow:1; border: 1px solid black; border-radius: 0.5rem; padding:2px; }
+.detailColumnPane { overflow-y: scroll; background: rgba(0,0,0,10%); width:50%; border: 1px solid black; border-radius: 0.5rem; padding:2px; }
+.detailJsonPane   { overflow-y: scroll; background: rgba(0,0,0,10%); width:50%; border: 1px solid black; border-radius: 0.5rem; padding:2px; }
+.detail-header    { display:block; font-weight: bold; border-bottom: 1px solid black; }
 
+/* --- JSON Viewer --- */
+.detailJsonPane .json-node { display: inline-block; vertical-align: top; }
+.detailJsonPane .toggle    { cursor: pointer; user-select: none; color: #555; margin-right: 5px; }
+.detailJsonPane .hidden    { display: none; }
+.detailJsonPane ul         { list-style: none; margin: 0 0 0 20px; padding: 0; }
