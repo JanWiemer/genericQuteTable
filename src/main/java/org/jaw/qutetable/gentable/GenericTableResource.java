@@ -5,6 +5,7 @@ import io.quarkus.logging.Log;
 import io.quarkus.qute.CheckedTemplate;
 import io.quarkus.qute.TemplateInstance;
 import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
@@ -21,6 +22,7 @@ import java.util.UUID;
 import java.util.stream.Stream;
 
 @Path("/api/table")
+@Singleton
 public class GenericTableResource {
 
   @CheckedTemplate(basePath = "generictable")
@@ -48,8 +50,8 @@ public class GenericTableResource {
   public TemplateInstance getTableData( //
                                         @QueryParam("dialog") String dialog, //
                                         @QueryParam("filter") String filter, //
-                                        @QueryParam("tableSortColumnName") String sortCol, //
-                                        @QueryParam("tableSortDir") String sortCDir, //
+                                        @QueryParam("sortCol") String sortCol, //
+                                        @QueryParam("sortDir") String sortCDir, //
                                         @QueryParam("maxRows") Integer maxRows //
   ) {
     Log.info("get table data for " + dialog + " with filter: " + filter + ", sortCol: " + sortCol + ", sortCDir: " + sortCDir + ", maxRows: " + maxRows);

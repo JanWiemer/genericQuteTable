@@ -7,7 +7,7 @@
   <!----------------------------------------->
   <!-- ************ SEARCH BAR *********** -->
   <div class="dialog-search-group">
-    <input id="tableSearchField" type="text"
+    <input id="tableSearchField" name="filter" type="text"
            placeholder="Search (fulltext or :column (:name=Max) - STRG+SPACE"
            value="{data.initialFilter}"
            onkeyup="localFilterTable()">
@@ -19,9 +19,9 @@
     >Server</button>
     <label>#Rows:</label>
     <input type="number" id="maxRowsInput" name="maxRows" value="20">
-    <input type="hidden" id="tableSortColumnIdx" value="none">
-    <input type="hidden" id="tableSortColumnName" value="none">
-    <input type="hidden" id="tableSortDirection" value="none">
+    <input type="hidden" id="tableSortColumnIdx" name="sortIdx" value="none">
+    <input type="hidden" id="tableSortColumnName" name="sortCol" value="none">
+    <input type="hidden" id="tableSortDirection" name="sortDir" value="none">
     <input id="tableSortSpec" value="" disabled></div>
 </div>
 <!----------------------------------------->
@@ -119,9 +119,9 @@
             document.querySelectorAll("th").forEach(th => th.classList.remove("asc", "desc"));
             sortColumn.classList.add(sortOrder === 1 ? "asc" : "desc");
             document.querySelector("input[id='tableSortColumnIdx']").value = idx;
-            document.querySelector("input[id='tableSortColumnName']").value = sortColumn.innerHTML;
+            document.querySelector("input[id='tableSortColumnName']").value = sortColumn.innerText;
             document.querySelector("input[id='tableSortDirection']").value = (sortOrder === 1 ? "asc" : "desc");
-            document.querySelector("input[id='tableSortSpec']").value = (sortOrder === 1 ? "ASC" : "DESC") + " by " + sortColumn.innerHTML;
+            document.querySelector("input[id='tableSortSpec']").value = (sortOrder === 1 ? "ASC" : "DESC") + " by " + sortColumn.innerText;
             rows.sort((a, b) => sortOrder * a.cells[idx].innerText.localeCompare(b.cells[idx].innerText));
             rows.forEach(r => tbody.appendChild(r));
         }
@@ -143,7 +143,7 @@
         });
         document.body.addEventListener('htmx:beforeRequest', function (evt) {
             let params = evt.detail.requestConfig.parameters;
-            document.getElementById('statusText').innerText = 'Filter: ' + params.get("filter") + ' | Sort: ' + params.get("tableSortColumnName") + ' ' + params.get("tableSortDirection");
+            document.getElementById('statusText').innerText = 'Filter: ' + params.get("filter") + ' | Sort: ' + params.get("sortCol") + ' ' + params.get("sortDir");
         });
     }
 </script>

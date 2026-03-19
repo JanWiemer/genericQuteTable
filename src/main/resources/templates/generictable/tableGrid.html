@@ -6,7 +6,7 @@
       <thead id="genericTableHeader" class="table-header">
       <tr>
         {#for col in data.columns}
-          <th title="{col.description}" , onclick="localSortTable({col_index})">{col.name}</th>
+          <th class="main-th" title="{col.description}" onclick="localSortTable({col_index})">{col.name}<div class="resizer"></div></th>
         {/for}
       </tr>
       </thead>
@@ -15,7 +15,7 @@
       {#for row in data.rows}
         <tr class="row-clickable" details='{row.getDetailsJson()}' jsonDetails='{row.jsonDetails}'>
           {#for cell in row.cells}
-            <td title="{cell.description}">{cell.content}</td>
+            <td class="main-td" title="{cell.description}">{cell.content}</td>
           {/for}
         </tr>
       {/for}
@@ -26,8 +26,8 @@
   </div>
   <div id="detailPane" class="resize-bottom">
     <div class="detailColumnPane">
-      <span class="detail-header">Details</span>
-      <div id="kvContent"><p style="color: #999;">Select a Row...</p></div>
+      <!--span class="detail-header">Details</span-->
+      <div id="kvContent"><p>Select a Row...</p></div>
     </div>
     <div id="detailJsonPane" class="detailJsonPane">
       <span class="detail-header">JSON Details</span>
@@ -41,10 +41,16 @@
         // DETAILS
         //==================================
         function createKvList(map) {
-            let html = '';
+            let html = '<table class="detail-table">';
+            html += '<thead><tr> <th style="width:20%;">Key<div class="resizer"></div></th> <th>Value</th> </tr></thead>';
+            html += '<tbody>';
             for (const [key, value] of Object.entries(map)) {
-                html += `<div class="kv-key">$\{key}</div><div class="kv-value">$\{value}</div>`;
+                html += '<tr>'
+                html += `<td class="kv-key">$\{key}</td> <td class="kv-value">$\{value}</td>`;
+                html += '</tr>'
             }
+            html += '</tbody>';
+            html += '</table>';
             return html;
         }
 
@@ -125,5 +131,32 @@
             }
         });
 
+        //==================================
+        // Table Column Resizer
+        //==================================
+        document.addEventListener('mousedown', function(e) {
+            if (e.target.classList.contains('resizer')) {
+                const resizer = e.target.closest('.resizer');
+                const th = resizer.parentElement;
+                const nextTh = th.nextElementSibling;
+                if (!nextTh) return;
+                const startX = e.pageX;
+                const thStartWidth = th.offsetWidth;
+                const nextThStartWidth = nextTh.offsetWidth;
+                const onMouseMove = e => {
+                    const diff = e.pageX - startX;
+                    if (thStartWidth + diff > 50 && nextThStartWidth - diff > 50) {
+                        th.style.width = `$\{thStartWidth + diff}px`;
+                        nextTh.style.width = `$\{nextThStartWidth - diff}px`;
+                    }
+                };
+                const onMouseUp = () => {
+                    document.removeEventListener('mousemove', onMouseMove);
+                    document.removeEventListener('mouseup', onMouseUp);
+                };
+                document.addEventListener('mousemove', onMouseMove);
+                document.addEventListener('mouseup', onMouseUp);
+            }
+        });
     }
 </script>

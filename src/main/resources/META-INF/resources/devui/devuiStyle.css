@@ -3,6 +3,7 @@
 .app-container { display:flex; flex-direction:row; height: 90vh }
 .app-main-area { display:flex; flex-direction:column; flex-grow:1; margin: 5px 5px 5px 5px }
 .app-footer    { background:lightgrey}
+* { scrollbar-width:thin; }
 
 .disableOnLoad.htmx-request { opacity: 0.4; filter: grayscale(1); pointer-events: none; transition: all 0.2s ease; }
 .disabled { opacity: 0.4; filter: grayscale(1); transition: all 0.2s ease; }
@@ -29,9 +30,15 @@
 .dialog-search-group #tableSortSpec { background: none; border: none }
 
 /* --- Main Table --- */
-.main-table    { border: 1px solid black; border-radius: 0.5rem; padding:2px; }
-.main-table th { position:sticky; top:0; z-index:1; background-color:lightgrey; }
-.main-table th::after      { content: ' -'; color:lightgrey; padding-:1px; }
+.main-table          { border: 1px solid black; border-radius: 0.5rem; padding:2px; }
+.main-table table    { border-collapse:collapse; width:100%; table-layout:fixed; }
+.main-table th, td   { border: 1px solid black; position: relative; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.main-table .resizer { position:absolute; right:0; top:0; width: 5px; height: 100%; cursor: col-resize; user-select: none; }
+.main-table .resizer:hover, .resizing { border-right: 2px solid #007bff; }
+
+.main-table table-header   { background:lightgrey; }
+.main-table th             { position:sticky; top:0; z-index:1; background-color:lightgrey; }
+.main-table th::after      { content: ' -'; color:lightgrey; padding:1px; }
 .main-table th.asc::after  { content: ' ↑'; color:black; }
 .main-table th.desc::after { content: ' ↓'; color:black; }
 .row-clickable          { cursor: pointer; }
@@ -41,12 +48,18 @@
 /* --- Resizer --- */
 .resize-container { display:flex; flex-grow:1; flex-direction:column; height:82vh; overflow-x: hidden; overflow-y: scroll; }
 .resize-top       { resize:vertical; overflow:auto; height:60%; min-height:10vh; max-height: 90vh; }
-.resize-bottom    { flex: 1; display: flex; overflow: hidden; }
+.resize-bottom    { flex: 1; display: flex; overflow: hidden; margin-top:5px; }
 
 /* --- Detail Area --- */
-.detailColumnPane { overflow-y: scroll; background: rgba(0,0,0,10%); width:50%; border: 1px solid black; border-radius: 0.5rem; padding:2px; }
+.detailColumnPane { overflow-y: scroll; background: rgba(0,0,0,10%); width:50%; border: 1px solid black; border-radius: 0.5rem; padding:2px; margin-right:5px; }
 .detailJsonPane   { overflow-y: scroll; background: rgba(0,0,0,10%); width:50%; border: 1px solid black; border-radius: 0.5rem; padding:2px; }
-.detail-header    { display:block; font-weight: bold; border-bottom: 1px solid black; }
+.detail-header    { display:block; font-weight: bold; border-bottom: 1px solid black; background-color:lightgrey; }
+
+.detail-table     { border-collapse:collapse; width:99%; table-layout:fixed; }
+.detail-table th  { position:sticky; top:0; z-index:1; background-color:lightgrey; }
+.detail-table th, td   { border: 1px solid black; position: relative; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.detail-table .resizer { position:absolute; right:0; top:0; width: 5px; height: 100%; cursor: col-resize; user-select: none; }
+.detail-table .resizer:hover, .resizing { border-right: 2px solid #007bff; }
 
 /* --- JSON Viewer --- */
 .detailJsonPane .json-node { display: inline-block; vertical-align: top; }
