@@ -77,8 +77,9 @@ public class GenericTableResource {
         row.add(col.getStringAccessor().apply(rowData));
       }
       TableRowData rowDef = tdd.row(row);
-      rowDef.detail("FullName", "Hero");
-      rowDef.detail("UID", UUID.randomUUID().toString());
+      for (var col : dialog.getColumns()) {
+        rowDef.detail(col.id(), col.getStringAccessor().apply(rowData));
+      }
     });
     return tdd;
   }
