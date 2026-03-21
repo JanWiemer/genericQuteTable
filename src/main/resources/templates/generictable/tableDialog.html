@@ -16,7 +16,8 @@
             hx-include="#tableSearchField, #tableSortColumnName, #tableSortDirection, #maxRowsInput"
             hx-target="#tableArea" hx-swap="innerHTML"
             hx-indicator=".disableOnLoad"
-    >Server</button>
+    >Server
+    </button>
     <label>#Rows:</label>
     <input type="number" id="maxRowsInput" name="maxRows" value="20">
     <input type="hidden" id="tableSortColumnIdx" name="sortIdx" value="none">
@@ -43,7 +44,8 @@
         function localFilterTable() {
             const filterQuery = document.getElementById("tableSearchField").value;
             const rows = document.querySelectorAll("#genericTableBody tr");
-            const conditions = filterQuery.split(/&|and/i).map(c => c.trim()).filter(c => c !== "");
+            const conditions = filterQuery.split(" & ")
+                .map(c => c.trim()).filter(c => c !== "");
             rows.forEach(row => {
                 let matchesFilter = true;
                 for (const condition of conditions) {
@@ -53,6 +55,7 @@
                             break;
                         }
                     } else if (condition.includes("=")) { // column filter with normal includes
+                        console.log("B condition: " + condition)
                         const [columnKey, filterPattern] = condition.substring(1).split("=").map(s => s.trim());
                         const columnIdx = colMap.get(columnKey.toLowerCase());
                         if (columnIdx !== undefined && filterPattern !== "") {

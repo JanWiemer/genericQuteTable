@@ -51,8 +51,8 @@
 .resize-bottom    { flex: 1; display: flex; overflow: hidden; margin-top:5px; }
 
 /* --- Detail Area --- */
-.detailColumnPane { overflow-y: scroll; background: rgba(0,0,0,10%); width:50%; border: 1px solid black; border-radius: 0.5rem; padding:2px; margin-right:5px; }
-.detailJsonPane   { overflow-y: scroll; background: rgba(0,0,0,10%); width:50%; border: 1px solid black; border-radius: 0.5rem; padding:2px; }
+.detailColumnPane { overflow-y: scroll; background: rgba(0,0,0,5%); width:50%; border: 1px solid black; border-radius: 0.5rem; padding:2px; margin-right:5px; }
+.detailJsonPane   { overflow-y: scroll; background: rgba(0,0,0,5%); width:50%; border: 1px solid black; border-radius: 0.5rem; padding:2px; }
 .detail-header    { display:block; font-weight: bold; border-bottom: 1px solid black; background-color:lightgrey; }
 
 .detail-table     { border-collapse:collapse; width:99%; table-layout:fixed; }
