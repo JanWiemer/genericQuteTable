@@ -1,20 +1,19 @@
 package org.jaw.qutetable.gentable.definition;
 
 import org.jaw.qutetable.ApplicationMenu;
-import org.jaw.qutetable.DialogDefinition;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 public class TableRegistry {
 
   private final Map<String, TableDialogDefinition<?>> registeredDialogs = new HashMap<>();
 
-  public <T> TableDialogDefinition<T> add(String name, Class<T> type) {
-    TableDialogDefinition<T> tdd = new TableDialogDefinition<>(name, type);
-    tdd.resourcePath("/api/table?dialog=" + name);
-    tdd.resourceDataPath("/api/table/data?dialog=" + name);
-    registeredDialogs.put(name, tdd);
-    return tdd;
+  public TableRegistry(Map<String, TableDialogDefinitionBuilder<?>> builders) {
+    builders.entrySet().forEach(entry -> {
+      registeredDialogs.put(entry.getKey(), entry.getValue().build());
+    });
   }
 
   public Collection<TableDialogDefinition<?>> getDialogTableDefinitions() {

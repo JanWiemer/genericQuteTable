@@ -29,14 +29,14 @@ public class ApplicationMenu {
                               int level, //
                               boolean isLeaf) {
     public String padding() {
-      return ""+ level * 15+"px";
+      return "" + level * 15 + "px";
     }
   }
 
   public List<FlatMenuItem> buildFlatMenu() {
     Map<String, FlatMenuItem> menuMap = new HashMap<>();
     for (var dialogDef : dialogDefinitions) {
-      String path = dialogDef.getDialogMenuPath();
+      String path = dialogDef.dialogMenuPath();
       String[] parts = path.split("\\.");
       StringBuilder currentPath = new StringBuilder();
       String parentPath = "";
@@ -50,7 +50,7 @@ public class ApplicationMenu {
         String fullPath = currentPath.toString();
         boolean isLeaf = (i == parts.length - 1);
         if (!menuMap.containsKey(fullPath)) {
-          menuMap.put(fullPath, new FlatMenuItem(label, fullPath, parentPath, dialogDef.getDialogResourcePath(), i, isLeaf));
+          menuMap.put(fullPath, new FlatMenuItem(label, fullPath, parentPath, dialogDef.dialogResourcePath(), i, isLeaf));
         }
       }
     }

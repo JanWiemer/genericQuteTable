@@ -13,6 +13,7 @@ import org.jaw.qutetable.example.Person;
 import org.jaw.qutetable.example.PersonRepository;
 import org.jaw.qutetable.gentable.GenericTableResource;
 import org.jaw.qutetable.gentable.definition.TableRegistry;
+import org.jaw.qutetable.gentable.definition.TableRegistryBuilder;
 
 @Path("/")
 public class ApplicationResource {
@@ -32,11 +33,14 @@ public class ApplicationResource {
   @Produces(MediaType.TEXT_HTML)
   public TemplateInstance getApplication() {
     Log.info("Load Application");
-    TableRegistry reg = genericTableResource.tableRegistry;
-    reg.add("SYS.THREADS", Thread.class).from(() -> Thread.getAllStackTraces().keySet().stream()).addAllFields();
-    reg.add("EXAMPLES.PERSONS", Person.class).from(() -> personRepo.getAllPersons().stream()).addAllFields();
-    reg.add("EXAMPLES.CARS", CarRepository.Car.class).from(() -> carRepo.getCars().stream()).addAllFields();
-    ApplicationMenu appMenu = reg.getApplicationMenu();
+    TableRegistryBuilder reg = genericTableResource.createTableRegistryBuilder();
+    reg.add("SYS.THREADS", Thread.class).from(() -> Thread.getAllStackTraces().keySet().stream()) //
+        .columns("tid", "name").addAllDetails();
+    reg.add("EXAMPLES.PERSONS", Person.class).from(() -> personRepo.getAllPersons().stream()) //
+        .columns("firstName", "lastName").addAllDetails();
+    reg.add("EXAMPLES.CARS", CarRepository.Car.class).from(() -> carRepo.getCars().stream()) //
+        .columns("id", "brand", "model").addAllDetails();
+    ApplicationMenu appMenu = reg.build().getApplicationMenu();
     return Templates.application(appMenu.build());
   }
 
