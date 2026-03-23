@@ -101,7 +101,6 @@ public class TableDialogDefinitionBuilder<T> {
 
 
   private TableDialogDefinitionBuilder<T> addAllDetails(String prefix, Class<?> clazz, Set<Class<?>> visited) {
-    Log.info(" - " + prefix + "  / " + clazz.getSimpleName() + " / " + visited);
     visited.add(clazz);
     for (Field f : clazz.getDeclaredFields()) {
       if (flatFieldDisplayPredicate!=null && flatFieldDisplayPredicate.test(f)) {
@@ -116,7 +115,6 @@ public class TableDialogDefinitionBuilder<T> {
   }
 
   private void checkAddDetailField(String id) {
-    Log.info(" --> add " + id);
     if (columns.stream().noneMatch(c -> id.equals(c.id()))
         && details.stream().noneMatch(c -> id.equals(c.id()))
     ) {
