@@ -1,12 +1,11 @@
 package org.jaw.qutetable.gentable.definition;
 
+import io.quarkus.logging.Log;
+
 import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -22,6 +21,7 @@ public class TableDialogDefinitionBuilder<T> {
   Supplier<Stream<T>> dataSource;
   final List<TableDialogColumnDefinition<T>> columns = new ArrayList<>();
   final List<TableDialogColumnDefinition<T>> details = new ArrayList<>();
+  Predicate<Field> flatFieldDisplayPredicate = null;
 
   public TableDialogDefinitionBuilder(String dialogMenuPath, Class<T> dialogObjectType) {
     this.dialogMenuPath = dialogMenuPath;
@@ -91,15 +91,37 @@ public class TableDialogDefinitionBuilder<T> {
     return this;
   }
 
+  public void setFlatFieldDisplayPredicate(Predicate<Field> flatFieldDisplayPredicate) {
+    this.flatFieldDisplayPredicate = flatFieldDisplayPredicate;
+  }
+
   public TableDialogDefinitionBuilder<T> addAllDetails() {
-    for (Field f : dialogObjectType.getDeclaredFields()) {
-      if (columns.stream().noneMatch(c -> f.getName().equals(c.id()))
-          && details.stream().noneMatch(c -> f.getName().equals(c.id()))
-      ) {
-        details.add(new TableDialogColumnDefinition(f.getName()));
+    return addAllDetails("", dialogObjectType, new HashSet<>());
+  }
+
+
+  private TableDialogDefinitionBuilder<T> addAllDetails(String prefix, Class<?> clazz, Set<Class<?>> visited) {
+    Log.info(" - " + prefix + "  / " + clazz.getSimpleName() + " / " + visited);
+    visited.add(clazz);
+    for (Field f : clazz.getDeclaredFields()) {
+      if (flatFieldDisplayPredicate!=null && flatFieldDisplayPredicate.test(f)) {
+        if (!visited.contains(f.getType())) { // no backward reference
+          addAllDetails(f.getName() + ".", f.getType(), visited);
+        }
+      } else {
+        checkAddDetailField(prefix + f.getName());
       }
     }
     return this;
+  }
+
+  private void checkAddDetailField(String id) {
+    Log.info(" --> add " + id);
+    if (columns.stream().noneMatch(c -> id.equals(c.id()))
+        && details.stream().noneMatch(c -> id.equals(c.id()))
+    ) {
+      details.add(new TableDialogColumnDefinition(id));
+    }
   }
 
   //=======================================================================================================

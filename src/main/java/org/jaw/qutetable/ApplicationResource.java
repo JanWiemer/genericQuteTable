@@ -15,6 +15,9 @@ import org.jaw.qutetable.gentable.GenericTableResource;
 import org.jaw.qutetable.gentable.definition.TableRegistry;
 import org.jaw.qutetable.gentable.definition.TableRegistryBuilder;
 
+import java.lang.reflect.Field;
+import java.util.function.Predicate;
+
 @Path("/")
 public class ApplicationResource {
 
@@ -34,12 +37,17 @@ public class ApplicationResource {
   public TemplateInstance getApplication() {
     Log.info("Load Application");
     TableRegistryBuilder reg = genericTableResource.createTableRegistryBuilder();
+    reg.setFlatFieldDisplayPredicate(f->f.getType().getPackageName().startsWith("org.jaw"));
+
     reg.add("SYS.THREADS", Thread.class).from(() -> Thread.getAllStackTraces().keySet().stream()) //
         .columns("tid", "name").addAllDetails();
+
     reg.add("EXAMPLES.PERSONS", Person.class).from(() -> personRepo.getAllPersons().stream()) //
         .columns("firstName", "lastName").addAllDetails();
+
     reg.add("EXAMPLES.CARS", CarRepository.Car.class).from(() -> carRepo.getCars().stream()) //
-        .columns("id", "brand", "model").addAllDetails();
+        .columns("id", "brand", "model", "engine").addAllDetails();
+
     ApplicationMenu appMenu = reg.build().getApplicationMenu();
     return Templates.application(appMenu.build());
   }

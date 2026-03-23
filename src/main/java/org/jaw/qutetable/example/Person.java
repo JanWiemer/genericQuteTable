@@ -26,13 +26,13 @@ public class Person {
   public static class Address {
     public String city;
     public String zipCode;
-    public String Street;
+    public String street;
     public int number;
 
     public Address(String city, String zipCode, String street, int number) {
       this.city = city;
       this.zipCode = zipCode;
-      Street = street;
+      this.street = street;
       this.number = number;
     }
   }
