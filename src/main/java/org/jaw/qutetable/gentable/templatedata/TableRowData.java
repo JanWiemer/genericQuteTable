@@ -1,13 +1,10 @@
-package org.jaw.qutetable.gentable.data;
+package org.jaw.qutetable.gentable.templatedata;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 
-import java.lang.ref.Reference;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 public final class TableRowData {
 

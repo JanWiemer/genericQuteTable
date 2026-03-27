@@ -1,19 +1,18 @@
-package org.jaw.qutetable.gentable.data;
+package org.jaw.qutetable.gentable.templatedata;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
 
 public class TableDialogData {
 
-  final ObjectMapper objectMapper;
   public final String dialogTitle;
   public final String tableDataPath;
   public String initialFilter;
   public List<TableColumnDefinition> columns = new ArrayList<>();
   public List<TableRowData> rows = new ArrayList<>();
+  final ObjectMapper objectMapper;
 
   public TableDialogData(String dialogTitle, String tableDataPath, ObjectMapper objectMapper) {
     this.dialogTitle = dialogTitle;

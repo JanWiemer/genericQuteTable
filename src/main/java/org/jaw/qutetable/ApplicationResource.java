@@ -12,11 +12,7 @@ import org.acme.repository.CarRepository;
 import org.jaw.qutetable.example.Person;
 import org.jaw.qutetable.example.PersonRepository;
 import org.jaw.qutetable.gentable.GenericTableResource;
-import org.jaw.qutetable.gentable.definition.TableRegistry;
-import org.jaw.qutetable.gentable.definition.TableRegistryBuilder;
-
-import java.lang.reflect.Field;
-import java.util.function.Predicate;
+import org.jaw.qutetable.gentable.definition.DialogRegistry;
 
 @Path("/")
 public class ApplicationResource {
@@ -36,7 +32,7 @@ public class ApplicationResource {
   @Produces(MediaType.TEXT_HTML)
   public TemplateInstance getApplication() {
     Log.info("Load Application");
-    TableRegistryBuilder reg = genericTableResource.createTableRegistryBuilder();
+    DialogRegistry.Builder reg = DialogRegistry.create();
     reg.setFlatFieldDisplayPredicate(f->f.getType().getPackageName().startsWith("org.jaw"));
 
     reg.add("SYS.THREADS", Thread.class).from(() -> Thread.getAllStackTraces().keySet().stream()) //
@@ -48,7 +44,9 @@ public class ApplicationResource {
     reg.add("EXAMPLES.CARS", CarRepository.Car.class).from(() -> carRepo.getCars().stream()) //
         .columns("id", "brand", "model", "engine").addAllDetails();
 
-    ApplicationMenu appMenu = reg.build().getApplicationMenu();
+    DialogRegistry tableRegistry = reg.build();
+    genericTableResource.setTableRegistry(tableRegistry);
+    ApplicationMenu appMenu = tableRegistry.getApplicationMenu();
     return Templates.application(appMenu.build());
   }
 

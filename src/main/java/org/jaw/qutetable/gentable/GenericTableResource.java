@@ -11,11 +11,10 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
-import org.jaw.qutetable.gentable.data.TableDialogData;
-import org.jaw.qutetable.gentable.data.TableRowData;
+import org.jaw.qutetable.gentable.templatedata.TableDialogData;
+import org.jaw.qutetable.gentable.templatedata.TableRowData;
 import org.jaw.qutetable.gentable.definition.TableDialogDefinition;
-import org.jaw.qutetable.gentable.definition.TableRegistry;
-import org.jaw.qutetable.gentable.definition.TableRegistryBuilder;
+import org.jaw.qutetable.gentable.definition.DialogRegistry;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,18 +31,14 @@ public class GenericTableResource {
     public static native TemplateInstance tableGrid(TableDialogData data);
   }
 
-  private TableRegistryBuilder tableRegistryBuilder;
-  public TableRegistry tableRegistry = null;
-
-  public TableRegistryBuilder createTableRegistryBuilder() {
-    if (tableRegistryBuilder == null) {
-      tableRegistryBuilder = new TableRegistryBuilder();
-    }
-    return tableRegistryBuilder;
-  }
-
   @Inject
   ObjectMapper objectMapper;
+
+  DialogRegistry tableRegistry = null;
+  public void setTableRegistry(DialogRegistry tableRegistry) {
+    this.tableRegistry = tableRegistry;
+  }
+
 
   @GET
   @Produces(MediaType.TEXT_HTML)
@@ -67,9 +62,6 @@ public class GenericTableResource {
   }
 
   private <T> TableDialogData createTableData(String dialogName, String filter, String sortCol, Object sortDir, Integer maxRows) {
-    if (tableRegistry == null) {
-      tableRegistry = tableRegistryBuilder.build();
-    }
     TableDialogDefinition<T> dialog = tableRegistry.getDialogTableDefinitions(dialogName);
     if (dialog == null) {
       Log.error("Dialog " + dialogName + " not found");
