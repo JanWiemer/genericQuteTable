@@ -10,10 +10,10 @@ public final class TableRowData {
 
   public final TableDialogData tableDialogData;
   public final List<TableCellData> cells;
-  public final Map<String, Object> details;
+  public final Map<String, String> details;
   public String jsonDetails;
 
-  public TableRowData(TableDialogData tableDialogData, List<TableCellData> cells, Map<String, Object> details) {
+  public TableRowData(TableDialogData tableDialogData, List<TableCellData> cells, Map<String, String> details) {
     this.tableDialogData = tableDialogData;
     this.cells = cells;
     this.details = details;
@@ -24,7 +24,7 @@ public final class TableRowData {
     this(tableDialogData, cells, new HashMap<>());
   }
 
-  public TableRowData detail(String key, Object value) {
+  public TableRowData detail(String key, String value) {
     details.put(key, value);
     return this;
   }
