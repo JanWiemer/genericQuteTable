@@ -1,15 +1,14 @@
 package org.jaw.qutetable.gentable.definition;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.logging.Log;
 
 import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.util.*;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
+import java.util.function.*;
 import java.util.stream.Stream;
 
 public class TableDialogDefinitionBuilder<T> {
@@ -21,6 +20,7 @@ public class TableDialogDefinitionBuilder<T> {
   Supplier<Stream<T>> dataSource;
   final List<TableDialogColumnDefinition<T>> columns = new ArrayList<>();
   final List<TableDialogColumnDefinition<T>> details = new ArrayList<>();
+  BiFunction<T, ObjectMapper, String> jsonDetailFunction;
   Predicate<Field> flatFieldDisplayPredicate = null;
 
   public TableDialogDefinitionBuilder(String dialogMenuPath, Class<T> dialogObjectType) {
@@ -41,7 +41,18 @@ public class TableDialogDefinitionBuilder<T> {
         column.comparator(ReflectionHelper.createFieldComparator(dialogObjectType, column.id()));
       }
     });
+    if (jsonDetailFunction == null) {
+      jsonDetailFunction = (obj, objectMapper) -> computeJson(obj, objectMapper);
+    }
     return new TableDialogDefinition<>(this);
+  }
+
+  private static <T> String computeJson(T obj, ObjectMapper objectMapper) {
+    try {
+      return objectMapper.writeValueAsString(obj);
+    } catch (JsonProcessingException e) {
+      return "{\"Exception\": \"" + e.toString() + "\"}";
+    }
   }
 
 
@@ -103,7 +114,7 @@ public class TableDialogDefinitionBuilder<T> {
   private TableDialogDefinitionBuilder<T> addAllDetails(String prefix, Class<?> clazz, Set<Class<?>> visited) {
     visited.add(clazz);
     for (Field f : clazz.getDeclaredFields()) {
-      if (flatFieldDisplayPredicate!=null && flatFieldDisplayPredicate.test(f)) {
+      if (flatFieldDisplayPredicate != null && flatFieldDisplayPredicate.test(f)) {
         if (!visited.contains(f.getType())) { // no backward reference
           addAllDetails(f.getName() + ".", f.getType(), visited);
         }
@@ -120,6 +131,14 @@ public class TableDialogDefinitionBuilder<T> {
     ) {
       details.add(new TableDialogColumnDefinition(id));
     }
+  }
+
+  //=======================================================================================================
+  // JSON DETAILS
+  //=======================================================================================================
+
+  public void computeJsonDetailsBy(BiFunction<T, ObjectMapper, String> jsonDetailFunction) {
+    this.jsonDetailFunction = jsonDetailFunction;
   }
 
   //=======================================================================================================

@@ -90,6 +90,7 @@ public class GenericTableResource {
       for (var col : dialog.details()) {
         rowDef.detail(col.id(), col.getStringAccessor().apply(rowData));
       }
+      rowDef.jsonDetail(dialog.computeJSonDetails(rowData, objectMapper));
     });
     return tdd;
   }
