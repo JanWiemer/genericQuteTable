@@ -11,15 +11,12 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
+import org.jaw.qutetable.gentable.definition.DialogRegistry;
+import org.jaw.qutetable.gentable.definition.TableDialogDefinition;
 import org.jaw.qutetable.gentable.templatedata.TableDialogData;
 import org.jaw.qutetable.gentable.templatedata.TableRowData;
-import org.jaw.qutetable.gentable.definition.TableDialogDefinition;
-import org.jaw.qutetable.gentable.definition.DialogRegistry;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Stream;
 
 @Path("/api/table")
@@ -66,7 +63,7 @@ public class GenericTableResource {
     return Templates.tableGrid(createTableData(dialog, filter, sortCol, sortCDir, maxRows));
   }
 
-  private <T> TableDialogData createTableData(String dialogName, String filter, String sortCol, Object sortDir, Integer maxRows) {
+  private <T> TableDialogData createTableData(String dialogName, String filterTxt, String sortCol, Object sortDir, Integer maxRows) {
     TableDialogDefinition<T> dialog = tableRegistry.getDialogTableDefinitions(dialogName);
     if (dialog == null) {
       Log.error("Dialog " + dialogName + " not found");
@@ -77,20 +74,51 @@ public class GenericTableResource {
     for (var col : dialog.columns()) {
       tdd.col(col.label(), col.id());
     }
-    FilterData filterData = new FilterData(filter);
+    List<FilterCondition> filterConditions = filterTxt == null ? Collections.emptyList() : computeFilterConditions(filterTxt);
+    Log.info("...filter conditions: " + filterConditions);
     Stream<T> dataStream = dialog.dataSource().get();
     dataStream.map(obj -> asMap(obj, dialog)) //
-        .filter(obj -> checkFilter(obj, filterData)) //
+        .filter(obj -> checkFilter(obj, filterConditions)) //
         .limit(maxRows == null ? 20 : maxRows) //
         .forEach(obj -> addRow(obj, dialog, tdd));
     return tdd;
   }
 
-  record FilterData(String fullTextFilter) {
+  private List<FilterCondition> computeFilterConditions(String filterTxt) {
+    List<FilterCondition> res = new ArrayList<>();
+    for (String condition : filterTxt.split(" & ")) {
+      if (condition.startsWith(":") && condition.indexOf("=") > 0) {
+        String column = condition.substring(1, condition.indexOf("=")).trim();
+        String pattern = condition.substring(condition.indexOf("=") + 1).trim();
+        res.add(new FilterCondition(column, pattern));
+      } else {
+        res.add(new FilterCondition(null, condition));
+      }
+    }
+    return res;
   }
 
-  private boolean checkFilter(Map<String, String> obj, FilterData filter) {
-    return filter.fullTextFilter == null || obj.values().stream().anyMatch(v -> v != null && v.contains(filter.fullTextFilter()));
+  record FilterCondition(String column, String pattern) {
+    boolean matches(String value) {
+      return value != null && value.matches(".*" + pattern + ".*");
+    }
+  }
+
+  private boolean checkFilter(Map<String, String> obj, List<FilterCondition> conditions) {
+    for (FilterCondition condition : conditions) {
+      if (condition.column() == null) { // full text search in all fields
+        if (obj.values().stream().noneMatch(v -> v != null && condition.matches(v))) {
+          return false;
+        }
+      } else {
+        String v = obj.get(condition.column);
+        Log.info("   --- val(" + condition.column + ") -> " + v);
+        if (v != null && !condition.matches(v)) {
+          return false;
+        }
+      }
+    }
+    return true;
   }
 
   private void addRow(Map<String, String> obj, TableDialogDefinition<?> dialog, TableDialogData tdd) {
