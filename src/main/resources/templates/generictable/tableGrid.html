@@ -6,7 +6,7 @@
       <thead id="genericTableHeader" class="table-header">
       <tr>
         {#for col in data.columns}
-          <th class="main-th" title="{col.description}" onclick="localSortTable({col_index})">{col.name}<div class="resizer"></div></th>
+          <th class="main-th" title="{col.description}" data-colidx="{col_index}">{col.name}<div class="resizer"></div></th>
         {/for}
       </tr>
       </thead>
