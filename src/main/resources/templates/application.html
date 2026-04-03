@@ -12,15 +12,18 @@
 <header class="app-header">Generic Table Demo Application</header>
 
 <div class="app-container" hx-on::beforeSend="interceptHTMX(event)">
+    <!--------- Application Menu ------->
     <aside id="app-sidebar-left" class="app-sidebar-left">
         {#include applicationMenu.html /}
     </aside>
+    <!--------- Application Main Area (Dialog Area) ------->
     <main class="app-main-area">
         <div id="dialogArea" class="app-dialog-area">
             <h3>Select a Dialog!</h3>
         </div>
     </main>
 </div>
+<!--------- Status Bar ------->
 <footer id="statusbar" class="app-footer">
     <div>
         Status: <span id="requestStatus" class="status-val">Ready</span> |
