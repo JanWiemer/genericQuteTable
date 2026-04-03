@@ -6,7 +6,11 @@
   <link rel="stylesheet" href="/devui/devuiStyle.css">
 </head>
 <body>
-<script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.8/dist/htmx.min.js"></script>
+<script src="/_importmap/generated_importmap.js"></script>
+<script type="module">
+    import 'htmx.org';
+    import lucene from 'lucene-query-parser';
+</script>
 <header class="app-header">Generic Table Demo Application</header>
 <div class="app-container" hx-on::beforeSend="interceptHTMX(event)">
   <aside id = "app-sidebar-left" class="app-sidebar-left">
