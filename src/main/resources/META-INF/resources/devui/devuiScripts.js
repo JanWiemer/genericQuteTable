@@ -126,6 +126,7 @@ document.addEventListener("keyup", function (e) {
     }
     localFilterTable();
 });
+
 // Filtering locally on client
 function localFilterTable() {
     const table = document.getElementById('genericTable');
@@ -176,5 +177,131 @@ function localFilterTable() {
         }
         row.style.display = matchesFilter ? "" : "none";
     });
+}
+
+//====================================================================
+// Resize Table Columns
+//====================================================================
+document.addEventListener('mousedown', function (e) {
+    if (e.target.classList.contains('resizer')) {
+        console.log(e);
+        const resizer = e.target.closest('.resizer');
+        const th = resizer.parentElement;
+        const nextTh = th.nextElementSibling;
+        if (!nextTh) return;
+        const startX = e.pageX;
+        const thStartWidth = th.offsetWidth;
+        const nextThStartWidth = nextTh.offsetWidth;
+        const onMouseMove = e => {
+            const diff = e.pageX - startX;
+            if (thStartWidth + diff > 50 && nextThStartWidth - diff > 50) {
+                th.style.width = `${thStartWidth + diff}px`;
+                nextTh.style.width = `${nextThStartWidth - diff}px`;
+            }
+        };
+        const onMouseUp = () => {
+            document.removeEventListener('mousemove', onMouseMove);
+            document.removeEventListener('mouseup', onMouseUp);
+        };
+        document.addEventListener('mousemove', onMouseMove);
+        document.addEventListener('mouseup', onMouseUp);
+    }
+});
+
+
+//====================================================================
+// Fill detail area depending on selected row
+//====================================================================
+document.addEventListener('click', e => {
+    if (!e.target.classList.contains('main-td')) {
+        return;
+    }
+    const row = e.target.closest('.row-clickable');
+    if (!row) return;
+    document.querySelectorAll('.row-clickable').forEach(r => r.classList.remove('selected'));
+    row.classList.add('selected');
+    const detailMap = JSON.parse(row.getAttribute('details'));
+    const kvList = createKvList(detailMap);
+    document.getElementById('kvContent').innerHTML = '<div class="kv-grid">' + kvList + '</div>';
+    //--- JSON Baum
+    let output = document.getElementById('jsonContent');
+    try {
+        const parsed = JSON.parse(row.getAttribute('jsonDetails'));
+        output.innerHTML = "";
+        output.appendChild(createJsonTree(parsed));
+    } catch (e) {
+        output.innerHTML = `<span class="error">Invalid JSON: $\{e.message}</span>`;
+    }
+});
+
+function createKvList(map) {
+    let html = '<table class="detail-table">';
+    html += '<thead><tr> <th style="width:20%;">Key<div class="resizer"></div></th> <th>Value</th> </tr></thead>';
+    html += '<tbody>';
+    for (const [key, value] of Object.entries(map)) {
+        html += '<tr>'
+        html += `<td class="kv-key">${key}</td> <td class="kv-value">${value}</td>`;
+        html += '</tr>'
+    }
+    html += '</tbody>';
+    html += '</table>';
+    return html;
+}
+
+function createJsonTree(data, isLast = true) {
+    if (typeof data !== 'object' || data === null) {
+        const valSpan = createJsonValueSpan(data);
+        if (!isLast) valSpan.append(',');
+        return valSpan;
+    }
+    const isArray = Array.isArray(data);
+    const container = document.createElement('div');
+    container.className = 'json-node';
+    const toggle = document.createElement('span');
+    toggle.className = 'toggle';
+    toggle.textContent = '▼';
+    container.appendChild(toggle);
+    container.appendChild(document.createTextNode(isArray ? '[' : '{'));
+    const list = document.createElement('ul');
+    const keys = Object.keys(data);
+    keys.forEach((key, index) => {
+        const li = document.createElement('li');
+        const lastInLevel = index === keys.length - 1;
+        if (!isArray) {
+            const keySpan = document.createElement('span');
+            keySpan.className = 'key';
+            keySpan.textContent = `"${key}": `;
+            li.appendChild(keySpan);
+        }
+        li.appendChild(createJsonTree(data[key], lastInLevel));
+        list.appendChild(li);
+    });
+    container.appendChild(list);
+    const closingText = (isArray ? ']' : '}') + (isLast ? '\n' : ', ');
+    container.appendChild(document.createTextNode(closingText));
+    toggle.onclick = (e) => {
+        e.stopPropagation();
+        const isHidden = list.classList.toggle('hidden');
+        toggle.textContent = isHidden ? '▶' : '▼';
+    };
+    return container;
+}
+
+function createJsonValueSpan(val) {
+    const span = document.createElement('span');
+    if (typeof val === 'string') {
+        span.className = 'string';
+        span.textContent = `"${val}"`;
+    } else if (typeof val === 'number') {
+        span.className = 'number';
+        span.textContent = val;
+    } else if (typeof val === 'boolean') {
+        span.className = 'boolean';
+        span.textContent = val;
+    } else {
+        span.className = 'null';
+        span.textContent = 'null';
+    }
+    return span;
 }
 
