@@ -63,13 +63,17 @@ public class GenericTableResource {
     return Templates.appTableDialogGrid(createTableData(dialog, filter, sortCol, sortCDir, maxRows));
   }
 
-  private <T> TableDialogData createTableData(String dialogName, String filterTxt, String sortCol, Object sortDir, Integer maxRows) {
+  private <T> TableDialogData createTableData(String dialogName, String filterTxt, String sortCol, String sortDir, Integer maxRows) {
     TableDialogDefinition<T> dialog = dialogDefinition.getTableRegistry().getDialogTableDefinitions(dialogName);
     if (dialog == null) {
       log.error("Dialog {} not found", dialogName);
       dialogDefinition.getTableRegistry().getDialogTableDefinitions().forEach(tdd -> log.info(" - found: {}", tdd.dialogMenuPath()));
       throw new IllegalArgumentException("Dialog " + dialogName + " not found");
     }
-    return new GenericTableDataAccess<T>().createTableData(dialog, new GenericTableDataAccess.SearchDefinition(filterTxt, sortCol, sortDir, maxRows), dialogDefinition.getObjectMapper());
+    return new GenericTableDataAccess<T>().createTableData(dialog, new GenericTableDataAccess.SearchDefinition(filterTxt, sortCol, isAscending(sortDir), maxRows), dialogDefinition.getObjectMapper());
+  }
+
+  private static boolean isAscending(String sortDir) {
+    return "ASC".equalsIgnoreCase(sortDir);
   }
 }

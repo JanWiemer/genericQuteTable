@@ -4,6 +4,7 @@ package org.jaw.qutetable.table;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jaw.qutetable.dialogdef.TableDialogDefinition;
 import org.jaw.qutetable.table.data.TableCellData;
+import org.jaw.qutetable.table.data.TableColumnData;
 import org.jaw.qutetable.table.data.TableDialogData;
 import org.jaw.qutetable.table.data.TableRowData;
 import org.slf4j.Logger;
@@ -21,7 +22,7 @@ public class GenericTableDataAccess<T> {
   public static final int DEFAULT_MAX_ROWS = 50;
   public static final String JSON_DETAILS_COL_ID = "@@@JSON-DETAILS@@@";
 
-  public record SearchDefinition(String filter, String sortCol, Object sortDir, Integer maxRows) {}
+  public record SearchDefinition(String filter, String sortCol, boolean ascending, Integer maxRows) {}
 
   public TableDialogData createTableData(TableDialogDefinition<T> dialog, SearchDefinition searchDef, ObjectMapper objectMapper) {
     TableDialogData tdd = new TableDialogData(dialog.dialogMenuPath(), dialog.dialogResourceDataPath(), objectMapper);
@@ -29,13 +30,35 @@ public class GenericTableDataAccess<T> {
       tdd.col(col.label(), col.id(), col.isNumericDataColumn());
     }
     List<FilterCondition> filterConditions = searchDef.filter == null ? Collections.emptyList() : computeFilterConditions(searchDef.filter);
+    Comparator<Map<String, TableCellData>> comparator = createComparator(tdd, searchDef.sortCol, searchDef.ascending);
     log.debug("...filter conditions: {}", filterConditions);
+    log.debug("...sort {} according to column {}", searchDef.ascending ? "ASC" : "DESC", searchDef.sortCol);
     Stream<T> dataStream = dialog.dataSource().get();
     dataStream.map(obj -> asMap(obj, dialog, objectMapper)) //
         .filter(obj -> checkFilter(obj, filterConditions)) //
         .limit(searchDef.maxRows == null ? DEFAULT_MAX_ROWS : searchDef.maxRows) //
         .forEach(obj -> addRow(obj, dialog, tdd));
     return tdd;
+  }
+
+  @SuppressWarnings("rawtypes")
+  private Comparator<Map<String, TableCellData>> createComparator(TableDialogData tdd, String sortCol, boolean ascending) {
+    TableColumnData columnDef = tdd.getColumn(sortCol);
+    if (columnDef == null) {
+      return (o1, o2) -> 0;
+    }
+    int dirFactor = ascending ? 1 : -1;
+    return (o1, o2) -> {
+      TableCellData d1 = o1.get(sortCol);
+      TableCellData d2 = o2.get(sortCol);
+      if (columnDef.numeric()) {
+        Comparable v1 = (Comparable) d1.rawData();
+        Comparable v2 = (Comparable) d2.rawData();
+        return dirFactor * v1.compareTo(v2);
+      } else {
+        return dirFactor * d1.displayText().compareTo(d2.displayText());
+      }
+    };
   }
 
   private List<FilterCondition> computeFilterConditions(String filterTxt) {

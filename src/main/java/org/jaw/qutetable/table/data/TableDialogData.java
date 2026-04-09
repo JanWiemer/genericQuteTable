@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TableDialogData {
+public class  TableDialogData {
 
   public final String dialogTitle;
   public final String tableDataPath;
@@ -39,6 +39,10 @@ public class TableDialogData {
     TableRowData row = new TableRowData(this, cellsInRow);
     rows.add(row);
     return row;
+  }
+
+  public TableColumnData getColumn(String columnName) {
+    return columns.stream().filter(c -> c.name().equals(columnName)).findFirst().orElse(null);
   }
 
 }
