@@ -1,4 +1,4 @@
-package org.acme.repository;
+package org.jaw.qutetable.example;
 import jakarta.enterprise.context.ApplicationScoped;
 import java.time.LocalDate;
 import java.util.ArrayList;

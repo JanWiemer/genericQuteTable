@@ -1,8 +1,9 @@
-package org.jaw.qutetable.gentable.templatedata;
+/* Copyright (c) SSI Schäfer Software Development GmbH */
+package org.jaw.qutetable.table.data;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -21,11 +22,11 @@ public final class TableRowData {
   }
 
   public TableRowData(TableDialogData tableDialogData, List<TableCellData> cells) {
-    this(tableDialogData, cells, new HashMap<>());
+    this(tableDialogData, cells, new LinkedHashMap<>()); // LinkedHashMap to preserve the order the entries are added
   }
 
-  public TableRowData detail(String key, String value) {
-    details.put(key, value);
+  public TableRowData detail(String key, TableCellData value) {
+    details.put(key, value.displayText());
     return this;
   }
 
@@ -34,15 +35,15 @@ public final class TableRowData {
     return this;
   }
 
-  public String getJsonRepresentation() { // used in templates
+  public String getJsonRepresentation() { // used in templates for the JSON detail tree view
     return jsonDetails;
   }
 
-  public String getDetailsJson() { // used in templates
+  public String getDetailsAsJsonString() { // used in templates for the detail key-value-table
     try {
       return tableDialogData.objectMapper.writeValueAsString(details);
     } catch (JsonProcessingException e) {
-      throw new RuntimeException(e);
+      throw new RuntimeException("Failed to get JSON for details area: " + e.getMessage(), e);
     }
   }
 

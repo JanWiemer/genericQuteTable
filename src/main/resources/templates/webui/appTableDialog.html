@@ -1,4 +1,4 @@
-{@org.jaw.qutetable.gentable.templatedata.TableDialogData data}
+{@org.jaw.qutetable.table.data.TableDialogData data}
 <!---------------------------------------------------------->
 <!--suppress HtmlFormInputWithoutLabel -->
 <div class="dialog-header"><b>Dialog:</b> {data.dialogTitle}</div>
@@ -18,7 +18,7 @@
     >Server
     </button>
     <label>#Rows:</label>
-    <input type="number" id="maxRowsInput" name="maxRows" value="20">
+    <input type="number" id="maxRowsInput" name="maxRows" value="50">
     <input type="hidden" id="tableSortColumnIdx" name="sortIdx" value="none">
     <input type="hidden" id="tableSortColumnName" name="sortCol" value="none">
     <input type="hidden" id="tableSortDirection" name="sortDir" value="none">
@@ -27,5 +27,5 @@
 <!----------------------------------------->
 <!-- ************ TABLE AREA *********** -->
 <div id="tableArea" class="table-wrapper disableOnLoad">
-    {#include generictable/tableGrid/}
+    {#include webui/appTableDialogGrid.html/}
 </div>

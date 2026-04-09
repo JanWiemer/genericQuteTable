@@ -1,4 +1,4 @@
-{@org.jaw.qutetable.gentable.templatedata.TableDialogData data}
+{@org.jaw.qutetable.table.data.TableDialogData data}
 <div id="masterDetailPane" class="resize-container">
   <div id="mainTablePane" class="main-table resize-top">
     <table id="genericTable" class="table">
@@ -6,16 +6,16 @@
       <thead id="genericTableHeader" class="table-header">
       <tr>
         {#for col in data.columns}
-          <th class="main-th" title="{col.description}" data-colidx="{col_index}">{col.name}<div class="resizer"></div></th>
+          <th class="main-th" title="{col.toolTip}" data-colidx="{col_index}" data-numeric={col.numeric}>{col.name}<div class="resizer"></div></th>
         {/for}
       </tr>
       </thead>
       <!------------------------------------------------------------------------------------>
       <tbody id="genericTableBody" class="table-body">
       {#for row in data.rows}
-        <tr class="row-clickable" details='{row.getDetailsJson()}' jsonDetails='{row.jsonDetails}'>
+        <tr class="row-clickable" data-details='{row.detailsAsJsonString}' data-json='{row.jsonDetails}'>
           {#for cell in row.cells}
-            <td class="main-td" title="{cell.description}">{cell.content}</td>
+            <td class="main-td" title="{cell.toolTip}" data-raw="{cell.rawData}">{cell.displayText}</td>
           {/for}
         </tr>
       {/for}
@@ -30,7 +30,7 @@
       <div id="kvContent"><p>Select a Row...</p></div>
     </div>
     <div id="detailJsonPane" class="detailJsonPane">
-      <span class="detail-header">JSON Details</span>
+      <span class="detail-header">JSON Details <button class="copy-json-to-clipboard" title="Copy to Clipboard">📋</button></span>
       <div id="jsonContent" class="jsonContent"></div>
     </div>
   </div>

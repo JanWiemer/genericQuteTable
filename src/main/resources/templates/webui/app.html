@@ -1,27 +1,29 @@
+{@org.jaw.qutetable.app.AppData appData}
 <!DOCTYPE html>
+<!--suppress XmlUnboundNsPrefix -->
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Generic Qute Table Application</title>
-    <link rel="stylesheet" href="/devui/devuiStyles.css">
+    <title>{appData.title}</title>
+    <link rel="stylesheet" href="/webui/styles.css">
 </head>
 <body>
 <script src="/_importmap/generated_importmap.js"></script>
-<script type="module" src="/devui/devUiScripts.js" defer></script>
+<script type="module" src="/webui/scripts.js" defer></script>
 
-<header class="app-header">Generic Table Demo Application</header>
+<header class="app-header">{appData.title}</header>
 
-<div class="app-container" hx-on::beforeSend="interceptHTMX(event)">
+<div class="app-container">
     <!--------- Application Menu ------->
     <aside id="app-sidebar-left" class="app-sidebar-left">
-        {#include applicationMenu.html /}
+        {#include webui/appMenu.html/}
     </aside>
     <!--------- Application Main Area (Dialog Area) ------->
-    <main class="app-main-area">
-        <div id="dialogArea" class="app-dialog-area">
+    <div class="app-main-area">
+        <div id="appDialogArea" class="app-dialog-area">
             <h3>Select a Dialog!</h3>
         </div>
-    </main>
+    </div>
 </div>
 <!--------- Status Bar ------->
 <footer id="statusbar" class="app-footer">

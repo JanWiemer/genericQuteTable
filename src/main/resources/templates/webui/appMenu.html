@@ -1,4 +1,4 @@
-{@org.jaw.qutetable.ApplicationMenu menu}
+{@org.jaw.qutetable.app.AppData appData}
 <div class="sidebar-header">
   <span class="menu-title">Dialog Tree</span>
   <button class="sidebar-toggle-button" onclick="document.getElementById('app-sidebar-left').classList.toggle('collapsed')">☰</button>
@@ -6,7 +6,7 @@
 <!--------- Application Menu ------->
 <nav class="menu-area">
   <ul class="menue-list">
-    {#for menuItem in menu.flatMenuItems}
+    {#for menuItem in appData.menu.flatMenuItems}
       <li id="node-{menuItem.fullPath}" class="menu-item"
           data-level="{menuItem.level}"
           data-path="{menuItem.fullPath}"
@@ -14,7 +14,7 @@
           style="padding-left: {menuItem.padding}; {#if menuItem.level > 0}display: none;{/if}">
         {#if menuItem.isLeaf}
           <button class="menu-button menu-link"
-                  hx-get={menuItem.dialogResourcePath} hx-target="#dialogArea" hx-swap="innerHTML">
+                  hx-get={menuItem.dialogResourcePath} hx-target="#appDialogArea" hx-swap="innerHTML">
             <span class="menu-icon"></span> {menuItem.label}
           </button>
         {#else}

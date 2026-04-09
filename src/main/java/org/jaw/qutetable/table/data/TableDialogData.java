@@ -1,4 +1,5 @@
-package org.jaw.qutetable.gentable.templatedata;
+/* Copyright (c) SSI Schäfer Software Development GmbH */
+package org.jaw.qutetable.table.data;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -10,7 +11,7 @@ public class TableDialogData {
   public final String dialogTitle;
   public final String tableDataPath;
   public String initialFilter;
-  public List<TableColumnDefinition> columns = new ArrayList<>();
+  public List<TableColumnData> columns = new ArrayList<>();
   public List<TableRowData> rows = new ArrayList<>();
   final ObjectMapper objectMapper;
 
@@ -25,22 +26,17 @@ public class TableDialogData {
     return this;
   }
 
-  public TableDialogData col(String name, String description) {
-    columns.add(new TableColumnDefinition(name, description));
+  public TableDialogData col(String name, String toolTip, boolean numeric) {
+    columns.add(new TableColumnData(name, toolTip, numeric));
     return this;
   }
 
-  public TableDialogData col(String name) {
-    return col(name, null);
-  }
-
-  public TableRowData row(String... cellsInRow) {
+  public TableRowData row(TableCellData... cellsInRow) {
     return row(List.of(cellsInRow));
   }
 
-  public TableRowData row(List<String> cellsInRow) {
-    List<TableCellData> cellList = cellsInRow.stream().map(s -> new TableCellData(s, null)).toList();
-    TableRowData row = new TableRowData(this, cellList);
+  public TableRowData row(List<TableCellData> cellsInRow) {
+    TableRowData row = new TableRowData(this, cellsInRow);
     rows.add(row);
     return row;
   }

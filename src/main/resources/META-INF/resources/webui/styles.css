@@ -9,7 +9,7 @@
 .disabled { opacity: 0.4; filter: grayscale(1); transition: all 0.2s ease; }
 
 /* --- Sidebar & Menu --- */
-.app-sidebar-left { background: lightgrey; width:200px; transition: width 0.3s ease; flex-shrink: 0; overflow-y: auto; overflow-x: hidden;  }
+.app-sidebar-left { background: lightgrey; width:300px; transition: width 0.3s ease; flex-shrink: 0; overflow-y: auto; overflow-x: hidden;  }
 .app-sidebar-left.collapsed { width: 40px }
 .app-sidebar-left.collapsed :is(.menu-title, .menu-area) { display: none; }
 
@@ -32,11 +32,10 @@
 /* --- Main Table --- */
 .main-table          { border: 1px solid black; border-radius: 0.5rem; padding:2px; }
 .main-table table    { border-collapse:collapse; width:100%; table-layout:fixed; }
-.main-table th, td   { border: 1px solid black; position: relative; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.main-table th, td   { border: 1px solid black; position: relative; overflow: hidden; text-overflow: ellipsis; }
 .main-table .resizer { position:absolute; right:0; top:0; width: 5px; height: 100%; cursor: col-resize; user-select: none; }
 .main-table .resizer:hover, .resizing { border-right: 2px solid #007bff; }
 
-.main-table table-header   { background:lightgrey; }
 .main-table th             { position:sticky; top:0; z-index:1; background-color:lightgrey; }
 .main-table th::after      { content: ' -'; color:lightgrey; padding:1px; }
 .main-table th.asc::after  { content: ' ↑'; color:black; }
@@ -51,14 +50,16 @@
 .resize-bottom    { flex: 1; display: flex; overflow: hidden; margin-top:5px; }
 
 /* --- Detail Area --- */
-.detailColumnPane { overflow-y: scroll; background: rgba(0,0,0,5%); width:50%; border: 1px solid black; border-radius: 0.5rem; padding:2px; margin-right:5px; }
-.detailJsonPane   { overflow-y: scroll; background: rgba(0,0,0,5%); width:50%; border: 1px solid black; border-radius: 0.5rem; padding:2px; }
-.detail-header    { display:block; font-weight: bold; border-bottom: 1px solid black; background-color:lightgrey; }
+.detailColumnPane  { overflow-y: scroll; background: rgba(0,0,0,5%); width:50%; border: 1px solid black; border-radius: 0.5rem; padding:2px; margin-right:5px; }
+.detailJsonPane    { overflow-y: scroll; background: rgba(0,0,0,5%); width:50%; border: 1px solid black; border-radius: 0.5rem; padding:2px; }
+.detail-header     { display:block; font-weight: bold; border-bottom: 1px solid black; background-color:lightgrey; }
+.copy-json-to-clipboard       { cursor: pointer; border: none; background: none; }
+.copy-json-to-clipboard:hover { background: rgba(255,255,255, 50%) }
 
-.detail-table     { border-collapse:collapse; width:99%; table-layout:fixed; }
-.detail-table th  { position:sticky; top:0; z-index:1; background-color:lightgrey; }
-.detail-table th, td   { border: 1px solid black; position: relative; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.detail-table .resizer { position:absolute; right:0; top:0; width: 5px; height: 100%; cursor: col-resize; user-select: none; }
+.detail-table table        { border-collapse:collapse; width:99%; table-layout:fixed; }
+.detail-table th, td       { border: 1px solid black; position: relative; overflow: hidden; text-overflow: ellipsis;  }
+.detail-table th           { position:sticky; top:0; z-index:1; background-color:lightgrey; }
+.detail-table .resizer     { position:absolute; right:0; top:0; width: 5px; height: 100%; cursor: col-resize; user-select: none; }
 .detail-table .resizer:hover, .resizing { border-right: 2px solid #007bff; }
 
 /* --- JSON Viewer --- */

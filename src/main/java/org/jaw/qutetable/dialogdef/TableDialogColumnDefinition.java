@@ -1,11 +1,14 @@
-package org.jaw.qutetable.gentable.definition;
+/* Copyright (c) SSI Schäfer Software Development GmbH */
+package org.jaw.qutetable.dialogdef;
 
+import java.time.Duration;
 import java.util.Comparator;
 import java.util.function.Function;
 
 public final class TableDialogColumnDefinition<T> {
 
   private final String id;
+  private Class<?> columnType;
   private String label;
   private Function<T, Object> accessor;
   private Function<Object, String> formatter = o -> o == null ? "-" : String.valueOf(o);
@@ -20,6 +23,10 @@ public final class TableDialogColumnDefinition<T> {
     this.id = id;
     this.label = label;
     this.accessor = accessor;
+  }
+
+  public void columnType(Class<?> columnType) {
+    this.columnType = columnType;
   }
 
   public TableDialogColumnDefinition<T> label(String label) {
@@ -42,8 +49,8 @@ public final class TableDialogColumnDefinition<T> {
     return this;
   }
 
-  public Function<T, String> getStringAccessor() {
-    return accessor.andThen(formatter);
+  public boolean isNumericDataColumn() {
+    return columnType.isPrimitive() || Number.class.isAssignableFrom(columnType) || Duration.class.isAssignableFrom(columnType);
   }
 
   public String id() {
@@ -56,6 +63,10 @@ public final class TableDialogColumnDefinition<T> {
 
   public Function<T, Object> accessor() {
     return accessor;
+  }
+
+  public Function<T, String> getStringAccessor() {
+    return accessor.andThen(formatter);
   }
 
   public Function<Object, String> formatter() {
